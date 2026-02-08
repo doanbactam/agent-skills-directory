@@ -114,7 +114,9 @@ export type SkillFullData = RepoMetadata & {
 export async function batchFetchSkills(
   items: Array<{ owner: string; repo: string; path: string }>
 ): Promise<Map<string, SkillFullData>> {
-  if (items.length === 0) return new Map()
+  if (items.length === 0) {
+    return new Map()
+  }
 
   const chunks = chunkArray(items, 50)
   const results = new Map<string, SkillFullData>()
