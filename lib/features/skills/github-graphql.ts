@@ -185,7 +185,7 @@ function buildBatchQuery(repos: Array<{ owner: string; repo: string }>): string 
   const repoQueries = repos
     .map(
       ({ owner, repo }, i) => `
-    repo${i}: repository(owner: "${owner}", name: "${repo}") {
+    repo${i}: repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(repo)}) {
       stargazerCount
       forkCount
       pushedAt
@@ -208,7 +208,7 @@ function buildFullBatchQuery(items: Array<{ owner: string; repo: string; path: s
   const repoQueries = items
     .map(
       ({ owner, repo, path }, i) => `
-    repo${i}: repository(owner: "${owner}", name: "${repo}") {
+    repo${i}: repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(repo)}) {
       stargazerCount
       forkCount
       pushedAt
@@ -222,13 +222,13 @@ function buildFullBatchQuery(items: Array<{ owner: string; repo: string; path: s
       defaultBranchRef {
         target {
           ... on Commit {
-            history(first: 1, path: "${path}") {
+            history(first: 1, path: ${JSON.stringify(path)}) {
               edges { node { committedDate } }
             }
           }
         }
       }
-      object(expression: "HEAD:${path}") {
+      object(expression: ${JSON.stringify(`HEAD:${path}`)}) {
         ... on Blob {
           text
           oid
