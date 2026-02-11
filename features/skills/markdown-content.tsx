@@ -1,4 +1,5 @@
 import { cn, getExternalUrl } from "@/lib/utils"
+import { CodeBlock } from "@/features/skills/code-block"
 
 type MarkdownContentProps = {
   content: string
@@ -47,11 +48,7 @@ async function MarkdownContent({ content, className }: MarkdownContentProps) {
               </code>
             )
           },
-          pre: ({ children }) => (
-            <pre className="bg-muted rounded-lg p-4 overflow-x-auto mb-4 text-xs">
-              {children}
-            </pre>
-          ),
+          pre: CodeBlock,
           a: ({ href, children }) => (
             <a
               href={getExternalUrl(href ?? "")}
