@@ -25,7 +25,6 @@ export function CodeBlock({ children, className, node, ...props }: CodeBlockProp
       <div className="absolute right-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
         <CopyButton
           text={text}
-          variant="ghost"
           className="h-6 w-6 bg-background/80 hover:bg-background shadow-sm backdrop-blur-sm"
         />
       </div>
