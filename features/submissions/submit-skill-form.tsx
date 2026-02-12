@@ -25,6 +25,7 @@ function SubmitSkillForm({ className }: { className?: string }) {
   const [approvedSkills, setApprovedSkills] = React.useState<ApprovedSkill[]>(
     [],
   );
+  const errorId = React.useId();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,12 +99,15 @@ function SubmitSkillForm({ className }: { className?: string }) {
           spellCheck={false}
           autoCapitalize="none"
           required
+          aria-invalid={state === "error"}
+          aria-describedby={state === "error" ? errorId : undefined}
           className="h-10"
         />
       </div>
 
       {message && (
         <div
+          id={errorId}
           className={cn(
             "flex items-start gap-2 rounded-md border p-2.5 text-sm",
             state === "success" && "border-green-500/30 bg-green-500/5",
