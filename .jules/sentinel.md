@@ -14,3 +14,8 @@
 **Vulnerability:** Webhook endpoints were vulnerable to DoS attacks due to lack of rate limiting.
 **Learning:** Implemented a robust rate limiting pattern using Redis (primary) with an in-memory fallback. This ensures protection even if the Redis service is temporarily unavailable or misconfigured.
 **Prevention:** Use the `apiRateLimit` with `try-catch` and fallback to `checkRateLimitInMemory` for critical endpoints where availability is key but protection is needed.
+
+## 2025-02-19 - [High] Broken Access Control on Admin Pages
+**Vulnerability:** The Admin Security Dashboard (`app/admin/security/page.tsx`) only checked for authentication (`userId`), allowing any signed-in user to access sensitive security scan results without admin privileges.
+**Learning:** Checking for `userId` confirms identity but not authority. Admin pages must explicitly verify the `admin` role.
+**Prevention:** Always use `checkAdminAuth()` or `requireAdmin()` from `@/lib/auth` for administrative routes. Do not rely solely on `auth()` or middleware unless configured to check roles.

@@ -1,19 +1,19 @@
 import * as React from "react"
-import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Shield, AlertTriangle, CheckCircle2 } from "lucide-react"
 
+import { checkAdminAuth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { skills } from "@/lib/db/schema"
 import { desc, isNotNull } from "drizzle-orm"
 import type { SecurityScanResult } from "@/lib/features/skills/security-scanner"
 
 export default async function SecurityPage() {
-  const { userId } = await auth()
+  const isAdmin = await checkAdminAuth()
 
-  if (!userId) {
-    redirect("/sign-in")
+  if (!isAdmin) {
+    redirect("/")
   }
 
   // Fetch skills with security scans
