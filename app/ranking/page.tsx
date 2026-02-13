@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Boxes, ShieldCheck, Trophy, Medal } from "lucide-react"
+import { Boxes, Trophy, Medal } from "lucide-react"
 
 import { getOwnerRankings, type OwnerRanking } from "@/lib/db/queries"
 import { buildMetadata } from "@/lib/seo"
+import { VerifiedBadge } from "@/features/skills/verified-badge"
 import { Container } from "@/components/layouts/container"
 import { BreadcrumbsJsonLd } from "@/components/seo/breadcrumbs-json-ld"
 import { ExternalImage } from "@/components/ui/external-image"
@@ -119,10 +120,7 @@ function TopThreeCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
             {owner.owner}
           </h3>
           {owner.isVerifiedOrg && (
-            <span className="inline-flex items-center">
-              <ShieldCheck className="size-4 shrink-0 text-blue-500" aria-hidden="true" />
-              <span className="sr-only">Verified</span>
-            </span>
+            <VerifiedBadge size="md" />
           )}
         </div>
         <div className="flex items-center justify-center gap-1.5">
@@ -178,10 +176,7 @@ function TopTenCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
             {owner.owner}
           </h3>
           {owner.isVerifiedOrg && (
-            <span className="inline-flex items-center">
-              <ShieldCheck className="size-3.5 shrink-0 text-blue-500" aria-hidden="true" />
-              <span className="sr-only">Verified</span>
-            </span>
+            <VerifiedBadge size="sm" />
           )}
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
@@ -237,10 +232,7 @@ function RankingCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
             {owner.owner}
           </h3>
           {owner.isVerifiedOrg && (
-            <span className="inline-flex items-center">
-              <ShieldCheck className="size-3.5 shrink-0 text-blue-500" aria-hidden="true" />
-              <span className="sr-only">Verified</span>
-            </span>
+            <VerifiedBadge size="sm" />
           )}
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">

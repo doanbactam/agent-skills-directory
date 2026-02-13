@@ -1,10 +1,11 @@
 import * as React from "react";
 import Link from "next/link";
-import { ShieldCheck, Star } from "lucide-react";
+import { Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { ExternalImage } from "@/components/ui/external-image";
 import { SecurityBadge } from "./security-badge";
+import { VerifiedBadge } from "./verified-badge";
 import type { SkillListItem } from "@/types";
 
 type SkillCardProps = {
@@ -61,10 +62,7 @@ function SkillCard({ skill, className }: SkillCardProps) {
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <span className="truncate">{skill.owner}</span>
             {skill.isVerifiedOrg && (
-              <span className="inline-flex items-center">
-                <ShieldCheck className="size-3.5 shrink-0 text-blue-500" aria-hidden="true" />
-                <span className="sr-only">Verified organization</span>
-              </span>
+              <VerifiedBadge size="sm" />
             )}
             {skill.securityScan && (
               <SecurityBadge securityScan={skill.securityScan} variant="icon" />

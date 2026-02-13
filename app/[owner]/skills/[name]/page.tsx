@@ -9,7 +9,6 @@ import {
   ExternalLink,
   FileText,
   Clock,
-  ShieldCheck,
   Share2,
   Tag,
 } from "lucide-react";
@@ -24,6 +23,7 @@ import { InstallCommand } from "@/features/skills/install-command";
 import { MarkdownContent } from "@/features/skills/markdown-content";
 import { RelatedSkillsSection } from "@/features/skills/related-skills-section";
 import { SecurityBadge } from "@/features/skills/security-badge";
+import { VerifiedBadge } from "@/features/skills/verified-badge";
 import { Container } from "@/components/layouts/container";
 import { Section } from "@/components/layouts/section";
 import { BreadcrumbsJsonLd } from "@/components/seo/breadcrumbs-json-ld";
@@ -209,10 +209,7 @@ export default async function SkillDetailPage({ params }: PageProps) {
                 <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
                   <span>{skill.owner}</span>
                   {skill.isVerifiedOrg && (
-                    <ShieldCheck
-                      className="size-3.5 shrink-0 text-blue-500"
-                      aria-label="Verified"
-                    />
+                    <VerifiedBadge size="sm" />
                   )}
                 </p>
               </div>
@@ -329,10 +326,7 @@ export default async function SkillDetailPage({ params }: PageProps) {
                   <p className="flex items-center gap-1 text-[13px] font-medium truncate group-hover:text-primary transition-colors">
                     <span className="truncate">{skill.owner}</span>
                     {skill.isVerifiedOrg && (
-                      <ShieldCheck
-                        className="size-3.5 shrink-0 text-blue-500"
-                        aria-label="Verified"
-                      />
+                      <VerifiedBadge size="sm" />
                     )}
                   </p>
                   <p className="text-[10px] text-muted-foreground/60">

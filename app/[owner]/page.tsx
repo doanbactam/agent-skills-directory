@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Star, GitFork, Github, Boxes, ExternalLink, ShieldCheck } from "lucide-react";
+import { Star, GitFork, Github, Boxes, ExternalLink } from "lucide-react";
 
 import { checkAdminAuth } from "@/lib/auth";
 import { getCategories, getOwnerInfo } from "@/lib/db/queries";
@@ -16,6 +16,7 @@ import { BreadcrumbsJsonLd } from "@/components/seo/breadcrumbs-json-ld";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ExternalImage } from "@/components/ui/external-image";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { VerifiedBadge } from "@/features/skills/verified-badge";
 import { OwnerSkillsFilter } from "./owner-skills-filter";
 
 const getOwner = React.cache(async (owner: string) => getOwnerInfo(owner));
@@ -127,10 +128,7 @@ export default async function OwnerPage({ params }: PageProps) {
               <h1 className="flex items-center gap-1.5 text-xl font-bold text-balance">
                 <span className="truncate">{ownerInfo.owner}</span>
                 {ownerInfo.isVerifiedOrg && (
-                  <ShieldCheck
-                    className="size-5 shrink-0 text-blue-500"
-                    aria-label="Verified"
-                  />
+                  <VerifiedBadge size="lg" />
                 )}
               </h1>
               <p className="text-xs text-muted-foreground text-pretty">
