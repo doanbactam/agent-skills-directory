@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { syncRepoSkills } from "@/lib/features/skills/sync"
 import { env } from "@/lib/env"
+import { strictRateLimit, getClientIdentifier } from "@/lib/rate-limit"
+import { timingSafeEqual, createHash } from "crypto"
 
 /**
  * POST /api/skills/sync-repo
@@ -18,6 +20,14 @@ import { env } from "@/lib/env"
  *   -d '{"owner": "anthropics", "repo": "skills"}'
  */
 export async function POST(request: Request) {
+  // Rate limiting
+  const identifier = getClientIdentifier(request)
+  const { success } = await strictRateLimit.limit(identifier)
+
+  if (!success) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+  }
+
   // Auth check
   const authHeader = request.headers.get("authorization")
   const expectedToken = env.SYNC_SECRET_TOKEN
@@ -30,7 +40,14 @@ export async function POST(request: Request) {
     )
   }
 
-  if (authHeader !== `Bearer ${expectedToken}`) {
+  // Constant-time comparison to prevent timing attacks
+  const expectedAuth = `Bearer ${expectedToken}`
+  const providedAuth = authHeader || ""
+
+  const expectedHash = createHash("sha256").update(expectedAuth).digest()
+  const providedHash = createHash("sha256").update(providedAuth).digest()
+
+  if (!timingSafeEqual(expectedHash, providedHash)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
