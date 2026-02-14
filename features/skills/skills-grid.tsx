@@ -34,6 +34,8 @@ type SkillsGridProps = {
 }
 
 function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
+  const inputRef = React.useRef<HTMLInputElement>(null)
+
   const {
     skills,
     categories,
@@ -59,6 +61,11 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
     initialCategories,
   })
 
+  const onClearSearch = () => {
+    handleClearSearch()
+    inputRef.current?.focus()
+  }
+
   return (
     <section className="space-y-4" aria-busy={loading} aria-label="Skills">
       {/* Search + Controls */}
@@ -69,6 +76,7 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
             aria-hidden="true"
           />
           <Input
+            ref={inputRef}
             type="search"
             placeholder="Search skills…"
             aria-label="Search skills"
@@ -82,7 +90,7 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
           {inputValue && (
             <button
               type="button"
-              onClick={handleClearSearch}
+              onClick={onClearSearch}
               aria-label="Clear search"
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
