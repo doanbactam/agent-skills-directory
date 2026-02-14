@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { syncRepoSkills } from "@/lib/features/skills/sync"
 import { env } from "@/lib/env"
+import { verifyBearerToken } from "@/lib/auth"
 
 /**
  * POST /api/skills/sync-repo
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
     )
   }
 
-  if (authHeader !== `Bearer ${expectedToken}`) {
+  if (!verifyBearerToken(authHeader, expectedToken)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 

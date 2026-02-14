@@ -19,3 +19,8 @@
 **Vulnerability:** The Admin Security Dashboard (`app/admin/security/page.tsx`) only checked for authentication (`userId`), allowing any signed-in user to access sensitive security scan results without admin privileges.
 **Learning:** Checking for `userId` confirms identity but not authority. Admin pages must explicitly verify the `admin` role.
 **Prevention:** Always use `checkAdminAuth()` or `requireAdmin()` from `@/lib/auth` for administrative routes. Do not rely solely on `auth()` or middleware unless configured to check roles.
+
+## 2025-02-19 - [High] Timing Attacks in Token Verification
+**Vulnerability:** API endpoints verified Bearer tokens using direct string comparison (`header !== expected`), which fails as soon as a mismatch is found. This timing difference allows attackers to guess the secret token character by character.
+**Learning:** Simple string equality checks leak timing information. Even high-entropy secrets can be vulnerable if network jitter is low enough or sample size is large enough.
+**Prevention:** Use `verifyBearerToken` from `@/lib/auth` which uses `crypto.timingSafeEqual` and hashes inputs to ensure constant-time comparison regardless of token length or content.

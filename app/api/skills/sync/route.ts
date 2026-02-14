@@ -4,6 +4,7 @@ import { batchUpsertSkills } from "@/lib/db/queries"
 import type { NewSkill } from "@/lib/db/schema"
 import { env } from "@/lib/env"
 import { slugify } from "@/lib/utils"
+import { verifyBearerToken } from "@/lib/auth"
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization")
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
     )
   }
 
-  if (authHeader !== `Bearer ${expectedToken}`) {
+  if (!verifyBearerToken(authHeader, expectedToken)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 

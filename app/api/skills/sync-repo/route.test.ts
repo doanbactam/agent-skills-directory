@@ -1,5 +1,13 @@
 import { describe, it, expect, mock } from "bun:test";
 
+// Mock @clerk/nextjs/server FIRST because lib/auth.ts imports it
+mock.module("@clerk/nextjs/server", () => {
+  return {
+    auth: () => ({ userId: "test-user" }),
+    currentUser: () => Promise.resolve({ publicMetadata: { role: "user" } }),
+  };
+});
+
 // Mock next/server
 mock.module("next/server", () => {
   return {
@@ -49,8 +57,4 @@ describe("Sync Repo Auth", () => {
     const body = await response.json();
     expect(body.error).toBe("Server configuration error");
   });
-
-  // Note: Mocking different env values in the same file with bun:test is tricky because modules are cached.
-  // Ideally we would have separate test files or use a more sophisticated mocking strategy.
-  // For this task, verifying the "missing token" case is sufficient as it covers the vulnerability fix.
 });

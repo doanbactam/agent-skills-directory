@@ -1,5 +1,13 @@
 import { describe, it, expect, mock } from "bun:test";
 
+// Mock @clerk/nextjs/server FIRST
+mock.module("@clerk/nextjs/server", () => {
+  return {
+    auth: () => ({ userId: "test-user" }),
+    currentUser: () => Promise.resolve({ publicMetadata: { role: "user" } }),
+  };
+});
+
 // Mock next/server
 mock.module("next/server", () => {
   return {
@@ -30,15 +38,15 @@ mock.module("@/lib/utils", () => ({
   slugify: (str: string) => str.toLowerCase().replace(/ /g, "-")
 }));
 
-// Mock lib/env
-mock.module("@/lib/env", () => ({
-  env: {
-    SYNC_SECRET_TOKEN: undefined
-  }
-}));
-
 describe("Sync All Auth", () => {
   it("should fail closed (500) if SYNC_SECRET_TOKEN is missing", async () => {
+    // Mock lib/env
+    mock.module("@/lib/env", () => ({
+      env: {
+        SYNC_SECRET_TOKEN: undefined
+      }
+    }));
+
     // Re-import route to apply mock
     const { POST } = await import("./route");
 
