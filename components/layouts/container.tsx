@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils"
 type ContainerSize = "sm" | "md" | "lg" | "xl" | "full"
 
 const containerSizes: Record<ContainerSize, string> = {
-  sm: "max-w-2xl",
-  md: "max-w-4xl",
-  lg: "max-w-4xl",
-  xl: "max-w-5xl",
-  full: "max-w-5xl",
+  sm: "max-w-3xl",
+  md: "max-w-5xl",
+  lg: "max-w-6xl",
+  xl: "max-w-7xl",
+  full: "max-w-[90rem]",
 }
 
 interface ContainerProps extends React.ComponentProps<"div"> {
@@ -19,7 +19,7 @@ interface ContainerProps extends React.ComponentProps<"div"> {
 const spacingClasses = {
   none: "",
   sm: "space-y-3",
-  md: "space-y-4", 
+  md: "space-y-4",
   lg: "space-y-6",
 }
 

@@ -20,9 +20,14 @@ type SubmitSkillDialogProps = {
 
 function SubmitSkillDialog({ buttonSize = "default" }: SubmitSkillDialogProps) {
   const [open, setOpen] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
   const { isSignedIn, isLoaded } = useAuth();
 
-  if (!isLoaded) {
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || !isLoaded) {
     return (
       <Button
         size={buttonSize}

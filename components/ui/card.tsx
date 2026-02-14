@@ -12,7 +12,7 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "bg-card text-card-foreground rounded-lg border shadow-sm",
+        "bg-card text-card-foreground rounded-lg border shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary/20",
         "has-[>img:first-child]:pt-0",
         "data-[size=sm]:gap-3 data-[size=sm]:py-3",
         "*:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg",

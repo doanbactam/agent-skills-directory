@@ -60,91 +60,95 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
   })
 
   return (
-    <section className="space-y-4" aria-busy={loading} aria-label="Skills">
-      {/* Search + Controls */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <form onSubmit={handleSearch} className="relative flex-1">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <Input
-            type="search"
-            placeholder="Search skills…"
-            aria-label="Search skills"
-            name="search"
-            autoComplete="off"
-            inputMode="search"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            className="pl-9 pr-9 h-9"
-          />
-          {inputValue && (
-            <button
-              type="button"
-              onClick={handleClearSearch}
-              aria-label="Clear search"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              <X className="size-4" aria-hidden="true" />
-            </button>
-          )}
-        </form>
+    <section className="space-y-6" aria-busy={loading} aria-label="Skills">
+      {/* Search + Controls - Floating Toolbar */}
+      <div className="sticky top-16 z-40 -mx-2 px-2 py-3 backdrop-blur-2xl bg-background/60 supports-[backdrop-filter]:bg-background/40 rounded-2xl border border-border/20 shadow-sm transition-all duration-300">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <form onSubmit={handleSearch} className="relative flex-1 group">
+            <Search
+              className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors"
+              aria-hidden="true"
+            />
+            <Input
+              type="search"
+              placeholder="Search agent skills..."
+              aria-label="Search skills"
+              name="search"
+              autoComplete="off"
+              inputMode="search"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              className="pl-10 pr-9 h-11 bg-background/50 border-transparent hover:border-border/50 focus-visible:bg-background transition-all shadow-none"
+            />
+            {inputValue && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                aria-label="Clear search"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted/50"
+              >
+                <X className="size-3.5" aria-hidden="true" />
+              </button>
+            )}
+          </form>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {categories.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2.5">
+            {categories.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="lg" className="h-11 px-4 gap-2 bg-background/50 border-border/50 hover:bg-background">
+                    {selectedCategories.length === 0
+                      ? "Category"
+                      : selectedCategories.length === 1
+                        ? categories.find((cat) => cat.slug === selectedCategories[0])?.name || "Category"
+                        : `${selectedCategories.length} Selected`}
+                    <ChevronDown data-icon="inline-end" className="size-3.5 opacity-70" aria-hidden="true" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" sideOffset={8} className="w-56 p-1 rounded-xl shadow-xl border-border/50 bg-background/95 backdrop-blur-xl">
+                  <DropdownMenuGroup>
+                    <DropdownMenuCheckboxItem
+                      checked={selectedCategories.length === 0}
+                      onCheckedChange={() => handleClearFilters()}
+                      className="rounded-lg cursor-pointer"
+                    >
+                      All Categories
+                    </DropdownMenuCheckboxItem>
+                    {categories.map((cat) => (
+                      <DropdownMenuCheckboxItem
+                        key={cat.id}
+                        checked={selectedCategories.includes(cat.slug)}
+                        onCheckedChange={() => handleCategoryToggle(cat.slug)}
+                        className="rounded-lg cursor-pointer"
+                      >
+                        {cat.name}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9">
-                  {selectedCategories.length === 0
-                    ? "All Categories"
-                    : selectedCategories.length === 1
-                      ? categories.find((cat) => cat.slug === selectedCategories[0])?.name || "Category"
-                      : `${selectedCategories.length} Categories`}
-                  <ChevronDown data-icon="inline-end" className="size-4" aria-hidden="true" />
+                <Button variant="outline" size="lg" className="h-11 px-4 gap-2 bg-background/50 border-border/50 hover:bg-background">
+                  {sortLabel}
+                  <ChevronDown data-icon="inline-end" className="size-3.5 opacity-70" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" sideOffset={4} className="w-56">
+              <DropdownMenuContent align="end" sideOffset={8} className="w-48 p-1 rounded-xl shadow-xl border-border/50 bg-background/95 backdrop-blur-xl">
                 <DropdownMenuGroup>
-                  <DropdownMenuCheckboxItem
-                    checked={selectedCategories.length === 0}
-                    onCheckedChange={() => handleClearFilters()}
-                  >
-                    All Categories
-                  </DropdownMenuCheckboxItem>
-                  {categories.map((cat) => (
-                    <DropdownMenuCheckboxItem
-                      key={cat.id}
-                      checked={selectedCategories.includes(cat.slug)}
-                      onCheckedChange={() => handleCategoryToggle(cat.slug)}
-                    >
-                      {cat.name}
-                    </DropdownMenuCheckboxItem>
-                  ))}
+                  <DropdownMenuRadioGroup value={sort} onValueChange={handleSortChange}>
+                    {sortOptions.map((option) => (
+                      <DropdownMenuRadioItem key={option.value} value={option.value} className="rounded-lg cursor-pointer">
+                        {option.label}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9">
-                {sortLabel}
-                <ChevronDown data-icon="inline-end" className="size-4" aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={4}>
-              <DropdownMenuGroup>
-                <DropdownMenuRadioGroup value={sort} onValueChange={handleSortChange}>
-                  {sortOptions.map((option) => (
-                    <DropdownMenuRadioItem key={option.value} value={option.value}>
-                      {option.label}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </div>
         </div>
       </div>
 
@@ -183,8 +187,8 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
 
       {/* Results */}
       {!loading && !error && skills.length > 0 && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {skills.map((skill) => (
               <SkillCard key={skill.id} skill={skill} />
             ))}
@@ -192,7 +196,7 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="pt-2">
+            <div className="pt-4 pb-8">
               <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
             </div>
           )}
@@ -227,10 +231,11 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
   }, [page, totalPages])
 
   return (
-    <div className="flex items-center justify-center gap-1 py-4">
+    <nav className="flex items-center justify-center gap-2" role="navigation" aria-label="Pagination">
       <Button
-        variant="ghost"
-        size="icon-sm"
+        variant="outline"
+        size="icon"
+        className="rounded-full size-9 border-border/50 bg-background/50 backdrop-blur-sm shadow-sm"
         onClick={() => onPageChange(Math.max(1, page - 1))}
         disabled={page <= 1}
         aria-label="Previous page"
@@ -238,30 +243,36 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
         <ChevronLeft className="size-4" aria-hidden="true" />
       </Button>
 
-      {pageNumbers.map((pageNum) => (
-        <Button
-          key={pageNum}
-          variant={page === pageNum ? "default" : "ghost"}
-          size="icon-sm"
-          onClick={() => onPageChange(pageNum)}
-          className={cn(page === pageNum && "pointer-events-none")}
-          aria-label={`Go to page ${pageNum}`}
-          aria-current={page === pageNum ? "page" : undefined}
-        >
-          {pageNum}
-        </Button>
-      ))}
+      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm">
+        {pageNumbers.map((pageNum) => (
+          <Button
+            key={pageNum}
+            variant={page === pageNum ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onPageChange(pageNum)}
+            className={cn(
+              "rounded-full size-8 p-0 text-xs font-medium transition-all",
+              page === pageNum ? "shadow-md scale-105" : "hover:bg-muted"
+            )}
+            aria-label={`Go to page ${pageNum}`}
+            aria-current={page === pageNum ? "page" : undefined}
+          >
+            {pageNum}
+          </Button>
+        ))}
+      </div>
 
       <Button
-        variant="ghost"
-        size="icon-sm"
+        variant="outline"
+        size="icon"
+        className="rounded-full size-9 border-border/50 bg-background/50 backdrop-blur-sm shadow-sm"
         onClick={() => onPageChange(Math.min(totalPages, page + 1))}
         disabled={page >= totalPages}
         aria-label="Next page"
       >
         <ChevronRight className="size-4" aria-hidden="true" />
       </Button>
-    </div>
+    </nav>
   )
 }
 

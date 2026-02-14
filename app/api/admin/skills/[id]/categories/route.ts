@@ -18,7 +18,7 @@ async function ensureAdmin() {
   }
 }
 
-export async function GET(request: Request, { params }: RouteParams) {
+export async function GET({ params }: RouteParams) {
   try {
     await ensureAdmin()
   } catch (error) {

@@ -28,6 +28,15 @@ const HeaderAuth = dynamic(
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   const navItems = [
     { label: "Browse", href: "/skills" },
