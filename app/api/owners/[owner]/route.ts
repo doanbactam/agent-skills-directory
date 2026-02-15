@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getOwnerInfo } from "@/lib/db/queries"
 
 export async function GET(
+  request: Request,
   { params }: { params: Promise<{ owner: string }> }
 ) {
   const { owner } = await params

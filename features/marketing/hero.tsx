@@ -4,6 +4,11 @@ import { Search, Star, Terminal } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Logo, type LogoName } from "@/components/ui/logo"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import type { HealthStatus } from "@/lib/health"
 
 type HeroStats = {
@@ -37,9 +42,16 @@ const TOOLS: { name: LogoName; label: string }[] = [
 
 function ProviderLogo({ name, label }: { name: LogoName; label: string }) {
   return (
-    <div className="flex size-10 items-center justify-center rounded-xl bg-background shadow-sm border border-border/50 transition-transform hover:scale-105">
-      <Logo name={name} size={20} aria-label={label} />
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="flex size-10 items-center justify-center rounded-xl bg-background shadow-sm border border-border/50 transition-transform hover:scale-105">
+          <Logo name={name} size={20} aria-label={label} />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        {label}
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
