@@ -1,10 +1,6 @@
-import { neon } from "@neondatabase/serverless"
-import { drizzle } from "drizzle-orm/neon-http"
+import { db } from "@/lib/db/client"
 import { categories } from "./schema"
 import { CATEGORIES, toDatabaseCategory } from "@/lib/categories"
-
-const sql = neon(process.env.DATABASE_URL!)
-const db = drizzle(sql)
 
 async function seed() {
   console.log("Seeding categories...")
@@ -28,6 +24,10 @@ async function seed() {
   }
 
   console.log("Done! Seeded", CATEGORIES.length, "categories")
+  process.exit(0)
 }
 
-seed().catch(console.error)
+seed().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
