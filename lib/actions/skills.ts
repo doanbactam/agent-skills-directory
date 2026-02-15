@@ -17,10 +17,11 @@ import { parseSkillMd, normalizeAllowedTools } from "@/lib/features/skills/parse
 import { toSkillIdentity, isLikelyAgentSkill } from "@/lib/features/skills/canonical"
 import { mapSkillToCategories, parseTopics } from "@/lib/categories"
 import { slugify } from "@/lib/utils"
-import { checkRateLimitInMemory } from "@/lib/rate-limit"
+import { checkRateLimitInMemory, reportRateLimit } from "@/lib/rate-limit"
 import { inngest } from "@/lib/inngest/client"
 import { skillSubmissionSchema, skillUpdateSchema, type SkillSubmission, type SkillUpdate } from "@/lib/validators/skills"
 import { checkAdminAuth } from "@/lib/auth"
+import { env } from "@/lib/env"
 
 const RATE_LIMIT = 10
 const RATE_WINDOW_MS = 60_000
@@ -64,13 +65,33 @@ export async function submitSkill(data: SkillSubmission): Promise<SubmissionResu
   const { repoUrl, skillPath: inputSkillPath, submittedBy } = validation.data
 
   const rateLimitKey = await getRateLimitKey()
-  const rateLimitResult = checkRateLimitInMemory({
-    key: rateLimitKey,
-    max: RATE_LIMIT,
-    windowMs: RATE_WINDOW_MS,
-  })
+  let allowed = true
 
-  if (!rateLimitResult.allowed) {
+  // Defense in depth: Distributed rate limiting
+  if (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN) {
+    try {
+      const { success } = await reportRateLimit.limit(rateLimitKey)
+      allowed = success
+    } catch (error) {
+      console.warn("Rate limit error (Redis), falling back to in-memory:", error)
+      const result = checkRateLimitInMemory({
+        key: rateLimitKey,
+        max: RATE_LIMIT,
+        windowMs: RATE_WINDOW_MS,
+      })
+      allowed = result.allowed
+    }
+  } else {
+    // Fallback: In-memory rate limiting
+    const result = checkRateLimitInMemory({
+      key: rateLimitKey,
+      max: RATE_LIMIT,
+      windowMs: RATE_WINDOW_MS,
+    })
+    allowed = result.allowed
+  }
+
+  if (!allowed) {
     return { success: false, error: "Too many requests. Please try again later." }
   }
 
