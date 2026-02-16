@@ -1,6 +1,9 @@
 "use client"
 
 import * as React from "react"
+import { ImageOff } from "lucide-react"
+
+import { cn } from "@/lib/utils"
 
 interface ExternalImageProps {
   src: string
@@ -72,10 +75,18 @@ function ExternalImage({
   if (phase === "error") {
     return (
       <div 
-        className={`flex items-center justify-center bg-muted text-muted-foreground text-xs ${className}`}
+        className={cn(
+          "flex items-center justify-center bg-muted text-muted-foreground/50 text-xs",
+          className
+        )}
         style={{ width, height }}
+        role="img"
+        aria-label={alt || "Image unavailable"}
       >
-        Image unavailable
+        <ImageOff className="size-4 shrink-0" aria-hidden="true" />
+        {width > 100 && (
+          <span className="ml-2 font-medium">Image unavailable</span>
+        )}
       </div>
     )
   }
