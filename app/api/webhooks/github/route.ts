@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import { inngest } from "@/lib/inngest/client"
 import { env } from "@/lib/env"
-import { createHmac, timingSafeEqual } from "crypto"
 import { apiRateLimit, checkRateLimitInMemory, getClientIdentifier } from "@/lib/rate-limit"
+import { verifySignature } from "@/lib/features/github/verify-signature"
 
 type PushEvent = {
   ref: string
@@ -20,21 +20,6 @@ type PushEvent = {
     added: string[]
     modified: string[]
     removed: string[]
-  }
-}
-
-function verifySignature(payload: string, signature: string | null, secret: string): boolean {
-  if (!signature) return false
-  
-  const [algo, hash] = signature.split("=")
-  if (algo !== "sha256" || !hash) return false
-  
-  const expected = createHmac("sha256", secret).update(payload).digest("hex")
-  
-  try {
-    return timingSafeEqual(Buffer.from(hash), Buffer.from(expected))
-  } catch {
-    return false
   }
 }
 
