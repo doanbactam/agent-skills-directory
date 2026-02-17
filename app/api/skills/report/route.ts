@@ -27,16 +27,11 @@ export async function POST(request: Request) {
     const validation = skillReportSchema.safeParse(body)
 
     if (!validation.success) {
-        let errorMessage = "Invalid input";
-        if (validation.error instanceof z.ZodError) {
-             const flattened = validation.error.flatten();
-             const fieldErrors = Object.entries(flattened.fieldErrors)
-                .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(", ")}`)
-                .join("; ");
-             errorMessage = fieldErrors || validation.error.message;
-        } else if (validation.error instanceof Error) {
-             errorMessage = validation.error.message;
-        }
+        const flattened = validation.error.flatten();
+        const fieldErrors = Object.entries(flattened.fieldErrors)
+          .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(", ")}`)
+          .join("; ");
+        const errorMessage = fieldErrors || "Validation failed";
 
         return NextResponse.json(
             { error: `Validation failed: ${errorMessage}` },
