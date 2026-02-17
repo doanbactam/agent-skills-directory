@@ -32,6 +32,18 @@ export const cacheInvalidationSchema = z.object({
 
 export type CacheInvalidation = z.infer<typeof cacheInvalidationSchema>
 
+export const skillReportSchema = z.object({
+  skillId: z.string().min(1, "Skill ID is required").max(100, "Skill ID too long"),
+  reason: z.enum(
+    ["spam", "malicious", "copyright", "inappropriate", "broken", "other"],
+    { required_error: "Valid reason is required", invalid_type_error: "Invalid reason" }
+  ),
+  description: z.string().max(1000, "Description too long").optional(),
+  reporterEmail: z.string().email("Invalid email address").max(255, "Email too long").optional().or(z.literal("")),
+})
+
+export type SkillReportInput = z.infer<typeof skillReportSchema>
+
 // Route parameter validation
 export const skillRouteParamsSchema = z.object({
   owner: z

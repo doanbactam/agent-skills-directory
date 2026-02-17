@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server"
 import { nanoid } from "nanoid"
+import { z } from "zod"
 
 import { db, skillReports } from "@/lib/db"
 import { reportRateLimit, getClientIdentifier } from "@/lib/rate-limit"
-
-const REPORT_REASONS = [
-  "spam",
-  "malicious",
-  "copyright",
-  "inappropriate",
-  "broken",
-  "other",
-] as const
+import { skillReportSchema } from "@/lib/validators/skills"
 
 export async function POST(request: Request) {
   try {
@@ -30,21 +23,28 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { skillId, reason, description, reporterEmail } = body
 
-    if (!skillId || typeof skillId !== "string") {
-      return NextResponse.json(
-        { error: "Skill ID is required" },
-        { status: 400 }
-      )
+    const validation = skillReportSchema.safeParse(body)
+
+    if (!validation.success) {
+        let errorMessage = "Invalid input";
+        if (validation.error instanceof z.ZodError) {
+             const flattened = validation.error.flatten();
+             const fieldErrors = Object.entries(flattened.fieldErrors)
+                .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(", ")}`)
+                .join("; ");
+             errorMessage = fieldErrors || validation.error.message;
+        } else if (validation.error instanceof Error) {
+             errorMessage = validation.error.message;
+        }
+
+        return NextResponse.json(
+            { error: `Validation failed: ${errorMessage}` },
+            { status: 400 }
+        )
     }
 
-    if (!reason || !REPORT_REASONS.includes(reason)) {
-      return NextResponse.json(
-        { error: "Valid reason is required" },
-        { status: 400 }
-      )
-    }
+    const { skillId, reason, description, reporterEmail } = validation.data
 
     await db.insert(skillReports).values({
       id: nanoid(),
