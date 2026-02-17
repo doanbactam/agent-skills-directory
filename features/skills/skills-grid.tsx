@@ -59,6 +59,29 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
     initialCategories,
   })
 
+  const searchInputRef = React.useRef<HTMLInputElement>(null)
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.key === "k" && (e.metaKey || e.ctrlKey)) ||
+        (e.key === "/" && !e.metaKey && !e.ctrlKey)
+      ) {
+        if (
+          document.activeElement !== searchInputRef.current &&
+          document.activeElement?.tagName !== "INPUT" &&
+          document.activeElement?.tagName !== "TEXTAREA"
+        ) {
+          e.preventDefault()
+          searchInputRef.current?.focus()
+        }
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [])
+
   return (
     <section className="space-y-6" aria-busy={loading} aria-label="Skills">
       {/* Search + Controls - Floating Toolbar */}
@@ -70,9 +93,11 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
               aria-hidden="true"
             />
             <Input
+              ref={searchInputRef}
               type="search"
               placeholder="Search agent skills..."
               aria-label="Search skills"
+              aria-keyshortcuts="Control+K /"
               name="search"
               autoComplete="off"
               inputMode="search"
@@ -80,6 +105,13 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
               onChange={(e) => setInputValue(e.target.value)}
               className="pl-10 pr-9 h-11 bg-background/50 border-transparent hover:border-border/50 focus-visible:bg-background transition-all shadow-none"
             />
+            {!inputValue && (
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 pointer-events-none">
+                <kbd className="h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 flex">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </div>
+            )}
             {inputValue && (
               <button
                 type="button"
