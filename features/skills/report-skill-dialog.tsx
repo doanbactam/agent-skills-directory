@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Flag } from "lucide-react"
+import { Flag, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -38,8 +38,6 @@ function ReportSkillDialog({ skillId, skillName }: ReportSkillDialogProps) {
   const [reason, setReason] = React.useState<ReportReason | null>(null)
   const [description, setDescription] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
-
-  const buttonRefs = React.useRef<(HTMLButtonElement | null)[]>([])
 
   const handleSubmit = async () => {
     if (!reason) {
@@ -90,65 +88,53 @@ function ReportSkillDialog({ skillId, skillName }: ReportSkillDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
+        <div className="space-y-5">
+          <div className="space-y-3">
             <label id="report-reason-label" className="text-sm font-medium">Reason</label>
             <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-labelledby="report-reason-label">
-              {REPORT_REASONS.map((r, index) => (
-                <button
+              {REPORT_REASONS.map((r) => (
+                <label
                   key={r.value}
-                  ref={(el) => {
-                    buttonRefs.current[index] = el
-                  }}
-                  type="button"
-                  onClick={() => setReason(r.value)}
-                  role="radio"
-                  aria-checked={reason === r.value}
-                  tabIndex={reason === r.value || (reason === null && index === 0) ? 0 : -1}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault()
-                      setReason(r.value)
-                    }
-
-                    // Arrow key navigation
-                    let nextIndex = -1
-                    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-                      nextIndex = (index + 1) % REPORT_REASONS.length
-                    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-                      nextIndex = (index - 1 + REPORT_REASONS.length) % REPORT_REASONS.length
-                    }
-
-                    if (nextIndex !== -1) {
-                      e.preventDefault()
-                      buttonRefs.current[nextIndex]?.focus()
-                    }
-                  }}
                   className={cn(
-                    "rounded-md border px-3 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    "relative flex cursor-pointer flex-col rounded-lg border p-3 shadow-sm outline-none transition-all duration-200 hover:bg-accent hover:text-accent-foreground has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-ring/40 has-[input:focus-visible]:ring-offset-2 has-[input:focus-visible]:ring-offset-background",
                     reason === r.value
-                      ? "border-primary bg-primary/10 text-foreground"
-                    : "border-border hover:bg-muted"
+                      ? "border-primary bg-primary/5 text-foreground shadow-sm"
+                      : "border-border bg-background"
                   )}
                 >
-                  {r.label}
-                </button>
+                  <span className="text-sm font-medium leading-none">{r.label}</span>
+                  <input
+                    type="radio"
+                    name="report-reason"
+                    value={r.value}
+                    className="sr-only"
+                    checked={reason === r.value}
+                    onChange={() => setReason(r.value)}
+                  />
+                </label>
               ))}
             </div>
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="report-details" className="text-sm font-medium">
-              Additional details <span className="text-muted-foreground">(optional)</span>
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="report-details" className="text-sm font-medium">
+                Additional details <span className="text-muted-foreground font-normal">(optional)</span>
+              </label>
+              <span className="text-[10px] text-muted-foreground tabular-nums">
+                {description.length}/500
+              </span>
+            </div>
             <Textarea
               id="report-details"
               name="details"
               autoComplete="off"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => setDescription(e.target.value.slice(0, 500))}
               placeholder="Provide more context about the issue…"
               rows={3}
+              maxLength={500}
+              className="resize-none"
             />
           </div>
         </div>
@@ -158,6 +144,7 @@ function ReportSkillDialog({ skillId, skillName }: ReportSkillDialogProps) {
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={!reason || isSubmitting}>
+            {isSubmitting && <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />}
             {isSubmitting ? "Submitting…" : "Submit Report"}
           </Button>
         </DialogFooter>
