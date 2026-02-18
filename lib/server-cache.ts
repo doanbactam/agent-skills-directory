@@ -70,7 +70,14 @@ export function invalidateCache(pattern?: string) {
     return
   }
   
-  const regex = new RegExp(pattern)
+  // Escape special regex characters except * to prevent ReDoS
+  // This allows * as a wildcard for prefix/suffix matching
+  // but treats other regex characters as literals
+  const safePattern = pattern
+    .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // Escape regex chars except *
+    .replace(/\*/g, '.*') // Convert * to .*
+
+  const regex = new RegExp(safePattern)
   for (const [key] of cache) {
     if (regex.test(key)) {
       cache.delete(key)
