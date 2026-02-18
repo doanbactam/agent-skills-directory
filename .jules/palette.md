@@ -5,3 +5,7 @@
 ## 2026-02-16 - React 19 Ref Prop
 **Learning:** React 19 allows passing `ref` as a standard prop to functional components, removing the need for `forwardRef`.
 **Action:** When creating or modifying UI components, accept `ref` in `props` and pass it down directly, ensuring it propagates to the underlying DOM element.
+
+## 2026-02-18 - Semantic Radio Groups
+**Learning:** Manual radio groups using divs and buttons require complex state management for accessibility (focus, selection). Semantic `<input type="radio" className="sr-only" />` inside `<label>` provides native keyboard navigation and screen reader support for free.
+**Action:** Replace custom radio implementations with semantic inputs, using CSS (e.g., `:has(:checked)`, `:has(:focus-visible)`) to style the label container.
