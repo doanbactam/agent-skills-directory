@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import { nanoid } from "nanoid"
-import { z } from "zod"
 
 import { db, skillReports } from "@/lib/db"
 import { reportRateLimit, getClientIdentifier } from "@/lib/rate-limit"

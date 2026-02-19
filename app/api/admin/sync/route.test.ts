@@ -19,7 +19,7 @@ mock.module("@/lib/db/queries", () => ({
 // Mock NextResponse
 mock.module("next/server", () => ({
   NextResponse: {
-    json: (body: any, init?: ResponseInit) =>
+    json: (body: unknown, init?: ResponseInit) =>
       Response.json(body, init),
   },
 }));
