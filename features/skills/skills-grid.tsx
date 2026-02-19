@@ -88,10 +88,14 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
       <div className="sticky top-16 z-40 -mx-2 px-2 py-3 backdrop-blur-2xl bg-background/60 supports-[backdrop-filter]:bg-background/40 rounded-2xl border border-border/20 shadow-sm transition-all duration-300">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <form onSubmit={handleSearch} className="relative flex-1 group">
-            <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors"
-              aria-hidden="true"
-            />
+            {loading ? (
+              <Loader2 className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+            ) : (
+              <Search
+                className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors"
+                aria-hidden="true"
+              />
+            )}
             <Input
               ref={searchInputRef}
               type="search"
@@ -117,7 +121,7 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
                 type="button"
                 onClick={handleClearSearch}
                 aria-label="Clear search"
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted/50"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <X className="size-3.5" aria-hidden="true" />
               </button>
@@ -185,7 +189,7 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
       </div>
 
       {/* Loading */}
-      {loading && (
+      {loading && skills.length === 0 && (
         <div className="flex items-center justify-center gap-2 py-12" role="status" aria-live="polite">
           <Loader2 className="text-primary size-5 animate-spin motion-reduce:animate-none" aria-hidden="true" />
           <span className="text-muted-foreground text-sm">Loading…</span>
@@ -218,8 +222,8 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
       )}
 
       {/* Results */}
-      {!loading && !error && skills.length > 0 && (
-        <div className="space-y-8">
+      {!error && skills.length > 0 && (
+        <div className={cn("space-y-8 transition-opacity duration-200", loading && "opacity-50 pointer-events-none")}>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {skills.map((skill) => (
               <SkillCard key={skill.id} skill={skill} />
@@ -229,7 +233,12 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="pt-4 pb-8">
-              <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                disabled={loading}
+              />
             </div>
           )}
         </div>
@@ -242,9 +251,10 @@ type PaginationProps = {
   page: number
   totalPages: number
   onPageChange: (page: number) => void
+  disabled?: boolean
 }
 
-function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
+function Pagination({ page, totalPages, onPageChange, disabled }: PaginationProps) {
   const pageNumbers = React.useMemo(() => {
     const pages: number[] = []
     const maxVisible = 5
@@ -269,7 +279,7 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
         size="icon"
         className="rounded-full size-9 border-border/50 bg-background/50 backdrop-blur-sm shadow-sm"
         onClick={() => onPageChange(Math.max(1, page - 1))}
-        disabled={page <= 1}
+        disabled={disabled || page <= 1}
         aria-label="Previous page"
       >
         <ChevronLeft className="size-4" aria-hidden="true" />
@@ -282,6 +292,7 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
             variant={page === pageNum ? "default" : "ghost"}
             size="sm"
             onClick={() => onPageChange(pageNum)}
+            disabled={disabled}
             className={cn(
               "rounded-full size-8 p-0 text-xs font-medium transition-all",
               page === pageNum ? "shadow-md scale-105" : "hover:bg-muted"
@@ -299,7 +310,7 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
         size="icon"
         className="rounded-full size-9 border-border/50 bg-background/50 backdrop-blur-sm shadow-sm"
         onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-        disabled={page >= totalPages}
+        disabled={disabled || page >= totalPages}
         aria-label="Next page"
       >
         <ChevronRight className="size-4" aria-hidden="true" />
