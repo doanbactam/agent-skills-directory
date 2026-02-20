@@ -29,7 +29,7 @@ import { Section } from "@/components/layouts/section";
 import { BreadcrumbsJsonLd } from "@/components/seo/breadcrumbs-json-ld";
 import { SkillStructuredData } from "@/components/seo/skill-structured-data";
 import { BadgeSnippet } from "@/features/skills/badge-snippet";
-import { ExternalImage } from "@/components/ui/external-image";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ReportSkillDialog } from "@/features/skills/report-skill-dialog";
 
@@ -106,7 +106,6 @@ export default async function SkillDetailPage({ params }: PageProps) {
 
   const githubUrl = `https://github.com/${skill.owner}/${skill.repo}/tree/main/${skill.path}`;
   const ownerUrl = `/${skill.owner}`;
-  const ownerInitial = skill.owner.charAt(0).toUpperCase();
 
   const formatRelativeDate = (date?: Date | null) => {
     if (!date) return null;
@@ -181,22 +180,12 @@ export default async function SkillDetailPage({ params }: PageProps) {
         <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
           <div className="space-y-5 min-w-0">
             <div className="relative flex items-center gap-3 group">
-              <div className="size-10 rounded-lg bg-muted/80 overflow-hidden flex items-center justify-center shrink-0">
-                {skill.avatarUrl ? (
-                  <ExternalImage
-                    src={skill.avatarUrl}
-                    alt={`${skill.name} by ${skill.owner}`}
-                    width={40}
-                    height={40}
-                    quality={75}
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  <span className="text-sm font-medium text-muted-foreground">
-                    {ownerInitial}
-                  </span>
-                )}
-              </div>
+              <UserAvatar
+                src={skill.avatarUrl}
+                alt={`${skill.name} by ${skill.owner}`}
+                size={40}
+                className="size-10"
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <h1 className="text-lg font-semibold truncate leading-tight text-balance">{skill.name}</h1>
@@ -309,22 +298,12 @@ export default async function SkillDetailPage({ params }: PageProps) {
                 href={ownerUrl}
                 className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-card/40 p-3.5 hover:border-border hover:bg-card/80 transition-[background-color,border-color,box-shadow,color] group"
               >
-                <div className="size-8 rounded-md bg-muted/80 overflow-hidden flex items-center justify-center shrink-0">
-                  {skill.avatarUrl ? (
-                    <ExternalImage
-                      src={skill.avatarUrl}
-                      alt={`${skill.owner} avatar`}
-                      width={32}
-                      height={32}
-                      quality={75}
-                      className="size-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-[10px] font-medium text-muted-foreground">
-                      {ownerInitial}
-                    </span>
-                  )}
-                </div>
+                <UserAvatar
+                  src={skill.avatarUrl}
+                  alt={`${skill.owner} avatar`}
+                  size={32}
+                  className="size-8 rounded-md"
+                />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-1 text-[13px] font-medium truncate group-hover:text-primary transition-colors">
                     <span className="truncate">{skill.owner}</span>
