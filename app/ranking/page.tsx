@@ -6,7 +6,7 @@ import { getOwnerRankings, type OwnerRanking } from "@/lib/db/queries"
 import { buildMetadata } from "@/lib/seo"
 import { Container } from "@/components/layouts/container"
 import { BreadcrumbsJsonLd } from "@/components/seo/breadcrumbs-json-ld"
-import { ExternalImage } from "@/components/ui/external-image"
+import { UserAvatar } from "@/components/ui/user-avatar"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = buildMetadata({
@@ -37,8 +37,6 @@ function parseSort(value: string | undefined): SortValue {
 }
 
 function TopThreeCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
-  const initials = owner.owner.slice(0, 2).toUpperCase()
-  
   const rankConfig = {
     1: {
       gradient: "from-amber-500/20 via-amber-500/10 to-transparent",
@@ -91,26 +89,16 @@ function TopThreeCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
       </div>
 
       {/* Avatar */}
-      <div className={cn(
-        "mt-4 rounded-2xl overflow-hidden bg-muted border-2",
-        config.size,
-        config.avatarBorder
-      )}>
-        {owner.avatarUrl ? (
-          <ExternalImage 
-            src={owner.avatarUrl} 
-            alt={`${owner.owner} avatar`} 
-            width={rank === 1 ? 80 : 64}
-            height={rank === 1 ? 80 : 64}
-            quality={80}
-            className="object-cover" 
-          />
-        ) : (
-          <div className="flex items-center justify-center size-full">
-            <span className="text-lg font-semibold text-muted-foreground">{initials}</span>
-          </div>
+      <UserAvatar
+        src={owner.avatarUrl}
+        alt={`${owner.owner} avatar`}
+        size={rank === 1 ? 80 : 64}
+        className={cn(
+          "mt-4 rounded-2xl border-2",
+          config.size,
+          config.avatarBorder
         )}
-      </div>
+      />
 
       {/* Info */}
       <div className="mt-4 text-center space-y-1">
@@ -137,8 +125,6 @@ function TopThreeCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
 }
 
 function TopTenCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
-  const initials = owner.owner.slice(0, 2).toUpperCase()
-
   return (
     <Link
       href={`/${owner.owner}`}
@@ -154,22 +140,12 @@ function TopTenCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
       </div>
 
       {/* Avatar */}
-      <div className="size-12 overflow-hidden rounded-xl bg-muted border border-border/50 shrink-0">
-        {owner.avatarUrl ? (
-          <ExternalImage 
-            src={owner.avatarUrl} 
-            alt={`${owner.owner} avatar`} 
-            width={48}
-            height={48}
-            quality={75}
-            className="object-cover" 
-          />
-        ) : (
-          <div className="flex items-center justify-center size-full">
-            <span className="text-sm font-semibold text-muted-foreground">{initials}</span>
-          </div>
-        )}
-      </div>
+      <UserAvatar
+        src={owner.avatarUrl}
+        alt={`${owner.owner} avatar`}
+        size={48}
+        className="size-12 rounded-xl border border-border/50"
+      />
 
       {/* Owner Info */}
       <div className="flex-1 min-w-0">
@@ -196,8 +172,6 @@ function TopTenCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
 }
 
 function RankingCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
-  const initials = owner.owner.slice(0, 2).toUpperCase()
-
   return (
     <Link
       href={`/${owner.owner}`}
@@ -213,22 +187,12 @@ function RankingCard({ owner, rank }: { owner: OwnerRanking; rank: number }) {
       </div>
 
       {/* Avatar */}
-      <div className="size-10 overflow-hidden rounded-lg bg-muted shrink-0">
-        {owner.avatarUrl ? (
-          <ExternalImage 
-            src={owner.avatarUrl} 
-            alt={`${owner.owner} avatar`} 
-            width={40}
-            height={40}
-            quality={75}
-            className="object-cover" 
-          />
-        ) : (
-          <div className="flex items-center justify-center size-full">
-            <span className="text-xs font-semibold text-muted-foreground">{initials}</span>
-          </div>
-        )}
-      </div>
+      <UserAvatar
+        src={owner.avatarUrl}
+        alt={`${owner.owner} avatar`}
+        size={40}
+        className="size-10"
+      />
 
       {/* Owner Info */}
       <div className="flex-1 min-w-0">

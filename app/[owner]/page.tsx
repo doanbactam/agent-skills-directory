@@ -14,7 +14,7 @@ import { Container } from "@/components/layouts/container";
 import { Section } from "@/components/layouts/section";
 import { BreadcrumbsJsonLd } from "@/components/seo/breadcrumbs-json-ld";
 import { JsonLd } from "@/components/seo/json-ld";
-import { ExternalImage } from "@/components/ui/external-image";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { OwnerSkillsFilter } from "./owner-skills-filter";
 
@@ -57,7 +57,6 @@ export default async function OwnerPage({ params }: PageProps) {
 
   const githubUrl = `https://github.com/${ownerInfo.owner}`;
   const siteUrl = getSiteUrl();
-  const initials = ownerInfo.owner.slice(0, 2).toUpperCase();
 
   return (
     <Container>
@@ -102,24 +101,12 @@ export default async function OwnerPage({ params }: PageProps) {
           <div className="flex flex-col sm:flex-row sm:items-end gap-4">
             {/* Avatar */}
             <div className="relative shrink-0">
-              <div className="size-16 rounded-xl bg-card border-2 border-background overflow-hidden shadow-sm">
-                {ownerInfo.avatarUrl ? (
-                  <ExternalImage
-                    src={ownerInfo.avatarUrl}
-                    alt={`${ownerInfo.owner} avatar`}
-                    width={64}
-                    height={64}
-                    quality={80}
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center size-full bg-muted">
-                    <span className="text-lg font-semibold text-muted-foreground">
-                      {initials}
-                    </span>
-                  </div>
-                )}
-              </div>
+              <UserAvatar
+                src={ownerInfo.avatarUrl}
+                alt={`${ownerInfo.owner} avatar`}
+                size={64}
+                className="size-16 rounded-xl bg-card border-2 border-background shadow-sm"
+              />
             </div>
 
             {/* Info */}

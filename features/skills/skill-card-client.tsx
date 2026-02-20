@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ShieldCheck, Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { ExternalImage } from "@/components/ui/external-image";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { SecurityBadge } from "./security-badge";
 import type { SkillListItem } from "@/types";
 
@@ -37,24 +37,11 @@ function SkillCard({ skill, className }: SkillCardProps) {
       {/* Header */}
       <div className="flex items-start gap-3">
         <div className="shrink-0">
-          {skill.avatarUrl ? (
-            <div className="overflow-hidden rounded-lg bg-muted">
-              <ExternalImage
-                src={skill.avatarUrl}
-                alt={`${skill.name} by ${skill.owner}`}
-                width={40}
-                height={40}
-                quality={75}
-                className="object-cover"
-              />
-            </div>
-          ) : (
-            <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-muted to-muted/50">
-              <span className="text-xs font-semibold text-muted-foreground">
-                {skill.owner.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          )}
+          <UserAvatar
+            src={skill.avatarUrl}
+            alt={`${skill.name} by ${skill.owner}`}
+            size={40}
+          />
         </div>
 
         <div className="min-w-0 flex-1 space-y-0.5 pr-12">
