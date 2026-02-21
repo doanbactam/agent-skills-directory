@@ -9,3 +9,7 @@
 ## 2026-02-18 - Semantic Radio Groups
 **Learning:** Manual radio groups using divs and buttons require complex state management for accessibility (focus, selection). Semantic `<input type="radio" className="sr-only" />` inside `<label>` provides native keyboard navigation and screen reader support for free.
 **Action:** Replace custom radio implementations with semantic inputs, using CSS (e.g., `:has(:checked)`, `:has(:focus-visible)`) to style the label container.
+
+## 2026-02-18 - Nested Interactive Cards
+**Learning:** Wrapping a card in a `Link` prevents nested interactive elements (like tooltips or buttons) from being accessible or valid HTML. The "Stretched Link" pattern allows the whole card to be clickable while keeping nested elements interactive and accessible.
+**Action:** Use a `div` for the card container (`relative`), place the `Link` inside the primary heading with an `absolute inset-0` child (`z-0`), and give nested interactive elements `relative z-10`.

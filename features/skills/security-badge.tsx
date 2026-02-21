@@ -86,10 +86,12 @@ function SecurityBadge({ securityScan, variant = "compact", className }: Securit
   if (variant === "icon") {
     return (
       <Tooltip>
-        <TooltipTrigger asChild>
-          <span className={`inline-flex ${className}`}>
-            <Icon className={`size-4 ${color}`} aria-label={label} />
-          </span>
+        <TooltipTrigger
+          className={`inline-flex items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${className}`}
+          type="button"
+          aria-label={`Security scan: ${label}`}
+        >
+          <Icon className={`size-4 ${color}`} aria-hidden="true" />
         </TooltipTrigger>
         <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
@@ -99,13 +101,13 @@ function SecurityBadge({ securityScan, variant = "compact", className }: Securit
   if (variant === "compact") {
     return (
       <Tooltip>
-        <TooltipTrigger asChild>
-          <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${bg} ${color} ${border} border ${className}`}
-          >
-            <Icon className="size-3" aria-hidden="true" />
-            <span>{safe ? "Verified" : label}</span>
-          </span>
+        <TooltipTrigger
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${bg} ${color} ${border} border ${className}`}
+          type="button"
+          aria-label={`Security scan: ${safe ? "Verified" : label}`}
+        >
+          <Icon className="size-3" aria-hidden="true" />
+          <span>{safe ? "Verified" : label}</span>
         </TooltipTrigger>
         <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
