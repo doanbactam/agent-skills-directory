@@ -48,11 +48,31 @@ type RateLimitResult = {
   resetAt: number
 }
 
+// Limit the number of in-memory buckets to prevent memory leaks/DoS
+export const MAX_BUCKETS = 10000
 const buckets = new Map<string, { count: number; resetAt: number }>()
 
 export function checkRateLimitInMemory({ key, max, windowMs }: RateLimitOptions): RateLimitResult {
   const now = Date.now()
   const existing = buckets.get(key)
+
+  // If new key (or expired - handled in next block but we want to cleanup first if new)
+  if (!existing) {
+    if (buckets.size >= MAX_BUCKETS) {
+      // 1. Cleanup expired keys first
+      for (const [k, v] of buckets.entries()) {
+        if (v.resetAt <= now) {
+          buckets.delete(k)
+        }
+      }
+
+      // 2. If still full, remove oldest (LRU-ish approximation)
+      if (buckets.size >= MAX_BUCKETS) {
+        const firstKey = buckets.keys().next().value
+        if (firstKey !== undefined) buckets.delete(firstKey)
+      }
+    }
+  }
 
   if (!existing || existing.resetAt <= now) {
     const resetAt = now + windowMs
