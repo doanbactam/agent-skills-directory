@@ -20,16 +20,13 @@ function SkillCard({ skill, className }: SkillCardProps) {
   const updatedAt = skill.updatedAtLabel ?? null;
 
   return (
-    <Link
-      href={skillUrl}
-      prefetch={false}
+    <div
       data-slot="skill-card"
       className={cn(
         "group relative flex h-full flex-col rounded-xl border border-border/40 bg-card/30 p-4",
         "backdrop-blur-sm",
         "transition-[box-shadow,background-color,border-color] duration-200 ease-out motion-reduce:transition-none",
         "hover:border-border/60 hover:bg-card/50 hover:shadow-md hover:shadow-black/5",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
         className,
       )}
     >
@@ -46,7 +43,14 @@ function SkillCard({ skill, className }: SkillCardProps) {
 
         <div className="min-w-0 flex-1 space-y-0.5 pr-12">
           <h3 className="truncate text-sm font-semibold leading-tight text-foreground group-hover:text-foreground">
-            {skill.name}
+            <Link
+              href={skillUrl}
+              prefetch={false}
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-md"
+            >
+              <span className="absolute inset-0 rounded-xl" aria-hidden="true" />
+              {skill.name}
+            </Link>
           </h3>
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <span className="truncate">{skill.owner}</span>
@@ -57,7 +61,9 @@ function SkillCard({ skill, className }: SkillCardProps) {
               </span>
             )}
             {skill.securityScan && (
-              <SecurityBadge securityScan={skill.securityScan} variant="icon" />
+              <div className="relative z-10 ml-1">
+                <SecurityBadge securityScan={skill.securityScan} variant="icon" />
+              </div>
             )}
           </p>
         </div>
@@ -85,7 +91,7 @@ function SkillCard({ skill, className }: SkillCardProps) {
           </span>
         )}
       </div>
-    </Link>
+    </div>
   );
 }
 
