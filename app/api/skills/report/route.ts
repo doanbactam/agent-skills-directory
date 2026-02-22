@@ -1,16 +1,32 @@
 import { NextResponse } from "next/server"
 import { nanoid } from "nanoid"
-import { z } from "zod"
 
 import { db, skillReports } from "@/lib/db"
-import { reportRateLimit, getClientIdentifier } from "@/lib/rate-limit"
+import { reportRateLimit, getClientIdentifier, checkRateLimitInMemory } from "@/lib/rate-limit"
 import { skillReportSchema } from "@/lib/validators/skills"
 
 export async function POST(request: Request) {
   try {
     // Rate limit: 5 reports per hour per IP
     const identifier = getClientIdentifier(request)
-    const { success, remaining } = await reportRateLimit.limit(identifier)
+    let success = true
+    let remaining = 5
+
+    try {
+      const result = await reportRateLimit.limit(identifier)
+      success = result.success
+      remaining = result.remaining
+    } catch (error) {
+      console.error("Rate limit error (Redis), falling back to in-memory:", error)
+      // Fallback to in-memory: 5 requests per hour (3,600,000 ms)
+      const fallback = checkRateLimitInMemory({
+        key: `report:${identifier}`,
+        max: 5,
+        windowMs: 3600000
+      })
+      success = fallback.allowed
+      remaining = fallback.remaining
+    }
     
     if (!success) {
       return NextResponse.json(
