@@ -1,10 +1,15 @@
 import { describe, it, expect, mock, beforeEach } from "bun:test";
 
+interface MockInit {
+  status?: number;
+  headers?: HeadersInit;
+}
+
 // Mock next/server
 mock.module("next/server", () => {
   return {
     NextResponse: {
-      json: (body: any, init: any) => ({
+      json: (body: unknown, init: MockInit) => ({
         status: init?.status || 200,
         headers: new Headers(init?.headers),
         json: async () => body,
@@ -29,14 +34,14 @@ mock.module("nanoid", () => ({
 // Mock Validators to avoid Zod dependency
 mock.module("@/lib/validators/skills", () => ({
   skillReportSchema: {
-    safeParse: (body: any) => ({
+    safeParse: (body: unknown) => ({
       success: true,
       data: {
         skillId: "test-skill",
         reason: "spam",
         description: "Test description",
         reporterEmail: "test@example.com",
-        ...body
+        ...(body as Record<string, unknown>)
       }
     })
   }
@@ -55,13 +60,15 @@ mock.module("@/lib/rate-limit", () => ({
   checkRateLimitInMemory: mockCheckInMemory
 }));
 
+type RouteHandler = (req: Request) => Promise<Response>;
+
 describe("Skill Report Security - Rate Limit Fallback", () => {
-  let POST: any;
+  let POST: RouteHandler;
 
   beforeEach(async () => {
     // Dynamic import to ensure mocks are applied
-    const module = await import("./route");
-    POST = module.POST;
+    const routeModule = await import("./route");
+    POST = routeModule.POST as unknown as RouteHandler;
 
     mockLimit.mockClear();
     mockCheckInMemory.mockClear();
@@ -85,7 +92,7 @@ describe("Skill Report Security - Rate Limit Fallback", () => {
     const res = await POST(req);
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as { success: boolean };
     expect(body.success).toBe(true);
 
     expect(mockLimit).toHaveBeenCalled();
@@ -116,7 +123,7 @@ describe("Skill Report Security - Rate Limit Fallback", () => {
     const res = await POST(req);
 
     expect(res.status).toBe(429);
-    const body = await res.json();
+    const body = await res.json() as { error: string };
     expect(body.error).toContain("Too many reports");
   });
 });
