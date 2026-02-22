@@ -12,4 +12,8 @@
 
 ## 2026-02-18 - Nested Interactive Cards
 **Learning:** Wrapping a card in a `Link` prevents nested interactive elements (like tooltips or buttons) from being accessible or valid HTML. The "Stretched Link" pattern allows the whole card to be clickable while keeping nested elements interactive and accessible.
-**Action:** Use a `div` for the card container (`relative`), place the `Link` inside the primary heading with an `absolute inset-0` child (`z-0`), and give nested interactive elements `relative z-10`.
+**Action:** Use a `div` for the card container (`relative`), place the `Link` inside the title with an `absolute inset-0` child (`z-0`), and give nested interactive elements `relative z-10`.
+
+## 2026-02-19 - Standardized Loading States
+**Learning:** Inconsistent loading indicators (icons vs text vs replacement) create cognitive load and duplicated code.
+**Action:** Integrate `isLoading` directly into the `Button` component to enforce a consistent pattern (spinner + text for standard, spinner-only for icon buttons) and handle disabled state automatically.

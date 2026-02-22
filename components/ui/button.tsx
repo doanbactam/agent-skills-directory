@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -39,10 +40,14 @@ function Button({
   size = "default",
   asChild,
   children,
+  isLoading,
+  loadingText,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    isLoading?: boolean
+    loadingText?: string
   }) {
   const buttonClasses = cn(buttonVariants({ variant, size }), className)
 
@@ -56,15 +61,28 @@ function Button({
     } as React.HTMLAttributes<HTMLElement>)
   }
 
+  const isIcon = size?.toString().startsWith("icon")
+
   return (
     <button
       data-slot="button"
       data-variant={variant}
       data-size={size}
       className={buttonClasses}
+      disabled={isLoading || props.disabled}
       {...props}
     >
-      {children}
+      {isLoading ? (
+        <>
+          <Loader2
+            className={cn("animate-spin", !isIcon && "mr-2")}
+            aria-hidden="true"
+          />
+          {!isIcon && (loadingText || children)}
+        </>
+      ) : (
+        children
+      )}
     </button>
   )
 }
