@@ -82,3 +82,42 @@ describe("checkRateLimitInMemory", () => {
     expect(result.remaining).toBe(max - 1)
   })
 })
+
+describe("getClientIdentifier", () => {
+  it("should prioritize X-Real-IP if available", async () => {
+    const { getClientIdentifier } = await import("./rate-limit")
+    const req = new Request("http://localhost", {
+      headers: {
+        "x-real-ip": "real-ip",
+        "x-forwarded-for": "spoofed-ip, real-ip"
+      }
+    })
+    expect(getClientIdentifier(req)).toBe("real-ip")
+  })
+
+  it("should use the last IP from X-Forwarded-For if X-Real-IP is missing", async () => {
+    const { getClientIdentifier } = await import("./rate-limit")
+    const req = new Request("http://localhost", {
+      headers: {
+        "x-forwarded-for": "spoofed-ip, real-ip"
+      }
+    })
+    expect(getClientIdentifier(req)).toBe("real-ip")
+  })
+
+  it("should handle single IP in X-Forwarded-For", async () => {
+    const { getClientIdentifier } = await import("./rate-limit")
+    const req = new Request("http://localhost", {
+      headers: {
+        "x-forwarded-for": "single-ip"
+      }
+    })
+    expect(getClientIdentifier(req)).toBe("single-ip")
+  })
+
+  it("should return anonymous if no headers present", async () => {
+    const { getClientIdentifier } = await import("./rate-limit")
+    const req = new Request("http://localhost")
+    expect(getClientIdentifier(req)).toBe("anonymous")
+  })
+})
