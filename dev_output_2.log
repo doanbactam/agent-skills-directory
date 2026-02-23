@@ -1,1 +1,34 @@
--bash: bunx: command not found
+$ next dev -p 4000
+▲ Next.js 16.1.5 (Turbopack)
+- Local:         http://localhost:4000
+- Network:       http://192.168.0.2:4000
+- Experiments (use with caution):
+  ✓ optimizeCss
+
+✓ Starting...
+✓ Ready in 1967ms
+○ Compiling /test-button ...
+
+[35m
+[Clerk]:[0m You are running in keyless mode.
+You can [35mclaim your keys[0m by visiting https://dashboard.clerk.com/apps/claim?token=1crpgbe9shjk9415t3kpj3zqcvpwga4kmj7cnhsj&return_url=http%3A%2F%2Flocalhost%3A4000%2F
+
+ GET /test-button 200 in 9.9s (compile: 8.0s, proxy.ts: 241ms, render: 1686ms)
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+ POST /test-button 200 in 313ms (compile: 11ms, proxy.ts: 11ms, render: 290ms)
+ GET /test-button 200 in 149ms (compile: 6ms, proxy.ts: 31ms, render: 112ms)
+ POST /test-button 303 in 294ms (compile: 9ms, proxy.ts: 30ms, render: 255ms)
+ GET /test-button 200 in 64ms (compile: 4ms, proxy.ts: 11ms, render: 48ms)
+ GET /test-button 200 in 863ms (compile: 303ms, proxy.ts: 111ms, render: 448ms)
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+ POST /test-button 200 in 91ms (compile: 4ms, proxy.ts: 7ms, render: 79ms)
+ GET /test-button 200 in 118ms (compile: 5ms, proxy.ts: 22ms, render: 91ms)
+ POST /test-button 303 in 167ms (compile: 4ms, proxy.ts: 6ms, render: 157ms)
+ GET /test-button 200 in 53ms (compile: 5ms, proxy.ts: 11ms, render: 37ms)
+[?25h

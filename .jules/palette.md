@@ -13,3 +13,7 @@
 ## 2026-02-18 - Nested Interactive Cards
 **Learning:** Wrapping a card in a `Link` prevents nested interactive elements (like tooltips or buttons) from being accessible or valid HTML. The "Stretched Link" pattern allows the whole card to be clickable while keeping nested elements interactive and accessible.
 **Action:** Use a `div` for the card container (`relative`), place the `Link` inside the primary heading with an `absolute inset-0` child (`z-0`), and give nested interactive elements `relative z-10`.
+
+## 2026-02-18 - Polymorphic Button Loading State
+**Learning:** Adding `isLoading` to a polymorphic component (e.g., `<Button asChild>`) is complex because standard props like `disabled` are often ignored or handled differently by the child (e.g., `Link` vs `button`). The `asChild` pattern requires careful prop forwarding or manual handling in the child.
+**Action:** When extending polymorphic UI components with `asChild` support, explicitly document that custom props (like `isLoading`) are ignored in `asChild` mode to prevent developer confusion, and suggest manual implementation for complex compositions.

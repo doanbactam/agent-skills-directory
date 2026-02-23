@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -39,15 +40,23 @@ function Button({
   size = "default",
   asChild,
   children,
+  isLoading,
+  loadingText,
+  disabled,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    isLoading?: boolean
+    loadingText?: string
   }) {
   const buttonClasses = cn(buttonVariants({ variant, size }), className)
 
   if (asChild && React.isValidElement(children)) {
     const child = children as React.ReactElement<{ className?: string }>
+    // Note: When asChild is true, we clone the child element but do not pass down props
+    // like disabled or isLoading. This matches the original behavior where props were ignored.
+    // To support loading states with asChild, the child component must handle it internally.
     return React.cloneElement(child, {
       className: cn(buttonClasses, child.props?.className),
       "data-slot": "button",
@@ -56,15 +65,25 @@ function Button({
     } as React.HTMLAttributes<HTMLElement>)
   }
 
+  const isIcon = size?.toString().includes("icon")
+
   return (
     <button
       data-slot="button"
       data-variant={variant}
       data-size={size}
       className={buttonClasses}
+      disabled={disabled || isLoading}
       {...props}
     >
-      {children}
+      {isLoading ? (
+        <>
+          <Loader2 className="animate-spin" />
+          {!isIcon && (loadingText || children)}
+        </>
+      ) : (
+        children
+      )}
     </button>
   )
 }
