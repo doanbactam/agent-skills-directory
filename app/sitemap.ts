@@ -22,7 +22,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/skills`, lastModified: now, changeFrequency: "hourly", priority: 0.95 },
     { url: `${siteUrl}/agent-skills`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/categories`, lastModified: now, changeFrequency: "daily", priority: 0.85 },
-    { url: `${siteUrl}/ranking`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
     { url: `${siteUrl}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/cookies`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
@@ -49,9 +48,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const existing = ownerMap.get(skill.owner)
       const skillDate = skill.repoUpdatedAt ?? skill.updatedAt ?? skill.indexedAt ?? now
       if (!existing || skillDate > existing.lastMod) {
-        ownerMap.set(skill.owner, { 
-          lastMod: skillDate, 
-          avatarUrl: skill.avatarUrl ?? null 
+        ownerMap.set(skill.owner, {
+          lastMod: skillDate,
+          avatarUrl: skill.avatarUrl ?? null
         })
       }
     }

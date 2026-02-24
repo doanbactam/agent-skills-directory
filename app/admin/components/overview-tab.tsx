@@ -16,7 +16,7 @@ type OverviewTabProps = {
 
 export const OverviewTab = React.memo(function OverviewTab({ stats }: OverviewTabProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-2">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">Dashboard Overview</h3>
       </div>
@@ -48,10 +48,10 @@ function StatCard({
   }[color ?? ""] ?? ""
 
   return (
-    <Card>
-      <CardContent className="p-3">
-        <div className="text-xs text-muted-foreground">{label}</div>
-        <div className={`text-2xl font-bold ${colorClass}`}>{value}</div>
+    <Card className="rounded-2xl border-border/50 bg-card/40 backdrop-blur-md shadow-sm">
+      <CardContent className="p-4">
+        <div className="text-xs font-medium text-muted-foreground">{label}</div>
+        <div className={`mt-2 text-2xl font-semibold ${colorClass}`}>{value}</div>
       </CardContent>
     </Card>
   )

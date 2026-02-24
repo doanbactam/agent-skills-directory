@@ -1,3 +1,0 @@
-$ next dev -p 4000
-/usr/bin/bash: line 1: next: command not found
-error: script "dev" exited with code 127

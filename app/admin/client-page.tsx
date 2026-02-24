@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/card"
 import type { Skill } from "./components/skills-table"
 
-// Lazy load tabs to improve initial page load
 const OverviewTab = dynamic(() => import("./components/overview-tab").then((mod) => ({ default: mod.OverviewTab })), {
   loading: () => <div className="p-8 text-center text-sm text-muted-foreground">Loading overview…</div>,
   ssr: false,
@@ -76,8 +75,8 @@ export default function AdminClientPage({ initialSkills, stats }: AdminClientPag
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6 p-6">
-      <Card>
+    <div className="mx-auto w-full max-w-6xl space-y-8 p-6 md:p-8">
+      <Card className="rounded-2xl border-border/50 bg-card/40 backdrop-blur-md shadow-sm">
         <CardHeader>
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>

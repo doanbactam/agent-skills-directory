@@ -106,7 +106,7 @@ export const SkillsTab = React.memo(function SkillsTab({ skills: initialSkills }
           cleanUpdates[key] = value
         }
       }
-      
+
       const result = await updateSkill(skillId, cleanUpdates, categories)
       if (result.success) {
         toast.success(result.message ?? "Skill updated successfully")
@@ -137,14 +137,14 @@ export const SkillsTab = React.memo(function SkillsTab({ skills: initialSkills }
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="rounded-2xl border-border/50 bg-card/40 backdrop-blur-md shadow-sm">
         <CardHeader>
           <CardTitle className="text-base">Skills Management</CardTitle>
           <CardDescription>Manage published skills.</CardDescription>
         </CardHeader>
       </Card>
 
-      <Card>
+      <Card className="rounded-2xl border-border/50 bg-card/40 backdrop-blur-md shadow-sm">
         <CardContent className="pt-6">
           <div className="flex flex-wrap gap-2 pb-4">
             {(["all", "pending", "approved"] as const).map((status) => (

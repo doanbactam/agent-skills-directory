@@ -182,7 +182,7 @@ export const SkillsTable = React.memo(function SkillsTable({
           return (
             <div className="flex items-center gap-1">
               <Button
-                size="icon-sm"
+                size="icon"
                 variant="ghost"
                 aria-label="Edit skill"
                 onClick={() => onEdit(skill)}
@@ -192,7 +192,7 @@ export const SkillsTable = React.memo(function SkillsTable({
               </Button>
               {skill.status !== "approved" && (
                 <Button
-                  size="icon-sm"
+                  size="icon"
                   aria-label="Approve skill"
                   onClick={() => handleAction(skill.id, "approve", onApprove)}
                   disabled={isProcessing}
@@ -201,7 +201,7 @@ export const SkillsTable = React.memo(function SkillsTable({
                 </Button>
               )}
               <Button
-                size="icon-sm"
+                size="icon"
                 variant="outline"
                 aria-label="Delete skill"
                 onClick={() => handleAction(skill.id, "delete", onDelete)}

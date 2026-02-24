@@ -64,8 +64,8 @@ function SkillsGridSkeleton() {
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        {Array.from({ length: 10 }).map((_, i) => (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="rounded-lg border border-border-subtle bg-card p-4 space-y-3">
             <div className="flex items-start gap-3">
               <div className="size-10 rounded-lg bg-muted animate-pulse motion-reduce:animate-none" />

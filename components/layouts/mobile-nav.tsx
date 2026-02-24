@@ -41,7 +41,6 @@ export function MobileNav() {
   const navItems = [
     { label: "Browse", href: "/skills" },
     { label: "Categories", href: "/categories" },
-    { label: "Ranking", href: "/ranking" },
   ]
 
   return (

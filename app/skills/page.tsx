@@ -30,7 +30,7 @@ function SkillsGridSkeleton() {
         <div className="flex-1 h-9 bg-muted rounded-md animate-pulse motion-reduce:animate-none" />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 12 }).map((_, i) => (
+        {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="rounded-lg border border-border/60 bg-card p-4 space-y-3">
             <div className="flex items-start gap-3">
               <div className="size-10 rounded-lg bg-muted animate-pulse motion-reduce:animate-none" />

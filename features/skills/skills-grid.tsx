@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  MoreHorizontal,
   X,
 } from "lucide-react"
 
@@ -83,131 +84,125 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
   }, [])
 
   return (
-    <section className="space-y-6" aria-busy={loading} aria-label="Skills">
-      {/* Search + Controls - Floating Toolbar */}
-      <div className="sticky top-16 z-40 -mx-2 px-2 py-3 backdrop-blur-2xl bg-background/60 supports-[backdrop-filter]:bg-background/40 rounded-2xl border border-border/20 shadow-sm transition-all duration-300">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <form onSubmit={handleSearch} className="relative flex-1 group">
-            <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors"
-              aria-hidden="true"
-            />
-            <Input
-              ref={searchInputRef}
-              type="search"
-              placeholder="Search agent skills..."
-              aria-label="Search skills"
-              aria-keyshortcuts="Control+K /"
-              name="search"
-              autoComplete="off"
-              inputMode="search"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="pl-10 pr-9 h-11 bg-background/50 border-transparent hover:border-border/50 focus-visible:bg-background transition-all shadow-none"
-            />
-            {!inputValue && (
-              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 pointer-events-none">
-                <kbd className="h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 flex">
-                  <span className="text-xs">⌘</span>K
-                </kbd>
-              </div>
-            )}
-            {inputValue && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                aria-label="Clear search"
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted/50"
-              >
-                <X className="size-3.5" aria-hidden="true" />
-              </button>
-            )}
-          </form>
+    <section className="space-y-4" aria-busy={loading} aria-label="Skills">
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <form onSubmit={handleSearch} className="relative flex-1 w-full sm:max-w-xs md:max-w-md">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            ref={searchInputRef}
+            type="search"
+            placeholder="Search agent skills..."
+            aria-label="Search skills"
+            aria-keyshortcuts="Control+K /"
+            name="search"
+            autoComplete="off"
+            inputMode="search"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className="w-full pl-9 pr-12 bg-background/50 shadow-sm"
+          />
+          {!inputValue && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 pointer-events-none">
+              <kbd className="h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                <span className="text-xs">⌘</span>K
+              </kbd>
+            </div>
+          )}
+          {inputValue && (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              aria-label="Clear search"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="size-4" aria-hidden="true" />
+            </button>
+          )}
+        </form>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            {categories.length > 0 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="lg" className="h-11 px-4 gap-2 bg-background/50 border-border/50 hover:bg-background">
+        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 flex-1">
+          {categories.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-10 rounded-xl flex-1 sm:flex-none justify-between gap-2 shadow-sm min-w-[130px] bg-background/50 px-3">
+                  <span className="truncate text-left font-normal">
                     {selectedCategories.length === 0
                       ? "Category"
                       : selectedCategories.length === 1
                         ? categories.find((cat) => cat.slug === selectedCategories[0])?.name || "Category"
                         : `${selectedCategories.length} Selected`}
-                    <ChevronDown data-icon="inline-end" className="size-3.5 opacity-70" aria-hidden="true" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" sideOffset={8} className="w-56 p-1 rounded-xl shadow-xl border-border/50 bg-background/95 backdrop-blur-xl">
-                  <DropdownMenuGroup>
-                    <DropdownMenuCheckboxItem
-                      checked={selectedCategories.length === 0}
-                      onCheckedChange={() => handleClearFilters()}
-                      className="rounded-lg cursor-pointer"
-                    >
-                      All Categories
-                    </DropdownMenuCheckboxItem>
-                    {categories.map((cat) => (
-                      <DropdownMenuCheckboxItem
-                        key={cat.id}
-                        checked={selectedCategories.includes(cat.slug)}
-                        onCheckedChange={() => handleCategoryToggle(cat.slug)}
-                        className="rounded-lg cursor-pointer"
-                      >
-                        {cat.name}
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="lg" className="h-11 px-4 gap-2 bg-background/50 border-border/50 hover:bg-background">
-                  {sortLabel}
-                  <ChevronDown data-icon="inline-end" className="size-3.5 opacity-70" aria-hidden="true" />
+                  </span>
+                  <ChevronDown className="size-4 opacity-50 shrink-0" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" sideOffset={8} className="w-48 p-1 rounded-xl shadow-xl border-border/50 bg-background/95 backdrop-blur-xl">
+              <DropdownMenuContent align="end" className="w-56 rounded-xl">
                 <DropdownMenuGroup>
-                  <DropdownMenuRadioGroup value={sort} onValueChange={handleSortChange}>
-                    {sortOptions.map((option) => (
-                      <DropdownMenuRadioItem key={option.value} value={option.value} className="rounded-lg cursor-pointer">
-                        {option.label}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
+                  <DropdownMenuCheckboxItem
+                    checked={selectedCategories.length === 0}
+                    onCheckedChange={() => handleClearFilters()}
+                  >
+                    All Categories
+                  </DropdownMenuCheckboxItem>
+                  {categories.map((cat) => (
+                    <DropdownMenuCheckboxItem
+                      key={cat.id}
+                      checked={selectedCategories.includes(cat.slug)}
+                      onCheckedChange={() => handleCategoryToggle(cat.slug)}
+                    >
+                      {cat.name}
+                    </DropdownMenuCheckboxItem>
+                  ))}
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
+          )}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="h-10 rounded-xl flex-1 sm:flex-none justify-between gap-2 shadow-sm min-w-[140px] bg-background/50 px-3">
+                <span className="truncate text-left font-normal">{sortLabel}</span>
+                <ChevronDown className="size-4 opacity-50 shrink-0" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuGroup>
+                <DropdownMenuRadioGroup value={sort} onValueChange={handleSortChange}>
+                  {sortOptions.map((option) => (
+                    <DropdownMenuRadioItem key={option.value} value={option.value}>
+                      {option.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
-      {/* Loading */}
       {loading && (
-        <div className="flex items-center justify-center gap-2 py-12" role="status" aria-live="polite">
-          <Loader2 className="text-primary size-5 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+        <div className="flex items-center justify-center gap-2 py-10" role="status" aria-live="polite">
+          <Loader2 className="text-primary size-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
           <span className="text-muted-foreground text-sm">Loading…</span>
         </div>
       )}
 
-      {/* Error */}
       {error && (
-        <div className="flex items-center gap-2 text-destructive text-sm py-8 justify-center" role="alert">
+        <div className="flex items-center gap-2 text-destructive text-sm py-6 justify-center" role="alert">
           <AlertCircle className="size-4" aria-hidden="true" />
           {error}
         </div>
       )}
 
-      {/* Empty */}
       {!loading && !error && skills.length === 0 && (
         <div
-          className="flex flex-col items-center justify-center gap-2 py-12 text-muted-foreground"
+          className="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground"
           role="status"
           aria-live="polite"
         >
-          <PackageSearch className="size-6 opacity-50" aria-hidden="true" />
+          <PackageSearch className="size-5 opacity-50" aria-hidden="true" />
           <p className="text-sm text-pretty">No skills found</p>
           {(searchQuery || selectedCategories.length > 0) && (
             <Button variant="ghost" size="sm" onClick={handleClearFilters}>
@@ -217,18 +212,16 @@ function SkillsGrid({ initialData, initialCategories }: SkillsGridProps) {
         </div>
       )}
 
-      {/* Results */}
       {!loading && !error && skills.length > 0 && (
-        <div className="space-y-8">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {skills.map((skill) => (
               <SkillCard key={skill.id} skill={skill} />
             ))}
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
-            <div className="pt-4 pb-8">
+            <div className="pt-2 pb-6">
               <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
             </div>
           )}
@@ -246,61 +239,79 @@ type PaginationProps = {
 
 function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
   const pageNumbers = React.useMemo(() => {
-    const pages: number[] = []
-    const maxVisible = 5
+    const pages: (number | string)[] = []
+    const maxPagesToShow = 7
 
-    if (totalPages <= maxVisible) {
+    if (totalPages <= maxPagesToShow) {
       for (let i = 1; i <= totalPages; i++) pages.push(i)
-    } else if (page <= 3) {
-      for (let i = 1; i <= maxVisible; i++) pages.push(i)
-    } else if (page >= totalPages - 2) {
-      for (let i = totalPages - maxVisible + 1; i <= totalPages; i++) pages.push(i)
     } else {
-      for (let i = page - 2; i <= page + 2; i++) pages.push(i)
+      if (page <= 4) {
+        for (let i = 1; i <= 5; i++) pages.push(i)
+        pages.push("...")
+        pages.push(totalPages)
+      } else if (page >= totalPages - 3) {
+        pages.push(1)
+        pages.push("...")
+        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i)
+      } else {
+        pages.push(1)
+        pages.push("...")
+        for (let i = page - 1; i <= page + 1; i++) pages.push(i)
+        pages.push("...")
+        pages.push(totalPages)
+      }
     }
 
     return pages
   }, [page, totalPages])
 
   return (
-    <nav className="flex items-center justify-center gap-2" role="navigation" aria-label="Pagination">
+    <nav className="flex items-center justify-center gap-1 sm:gap-2" role="navigation" aria-label="Pagination">
       <Button
         variant="outline"
         size="icon"
-        className="rounded-full size-9 border-border/50 bg-background/50 backdrop-blur-sm shadow-sm"
         onClick={() => onPageChange(Math.max(1, page - 1))}
         disabled={page <= 1}
         aria-label="Previous page"
+        className="size-8 sm:size-9"
       >
         <ChevronLeft className="size-4" aria-hidden="true" />
       </Button>
 
-      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm">
-        {pageNumbers.map((pageNum) => (
-          <Button
-            key={pageNum}
-            variant={page === pageNum ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onPageChange(pageNum)}
-            className={cn(
-              "rounded-full size-8 p-0 text-xs font-medium transition-all",
-              page === pageNum ? "shadow-md scale-105" : "hover:bg-muted"
-            )}
-            aria-label={`Go to page ${pageNum}`}
-            aria-current={page === pageNum ? "page" : undefined}
-          >
-            {pageNum}
-          </Button>
-        ))}
+      <div className="flex items-center gap-0.5 sm:gap-1">
+        {pageNumbers.map((pageNum, idx) => {
+          if (pageNum === "...") {
+            return (
+              <div key={`ellipsis-${idx}`} className="flex size-8 sm:size-9 items-center justify-center">
+                <MoreHorizontal className="size-4 opacity-50" aria-hidden="true" />
+              </div>
+            )
+          }
+
+          const isCurrent = page === pageNum
+          return (
+            <Button
+              key={`page-${pageNum}`}
+              variant={isCurrent ? "default" : "ghost"}
+              size="icon"
+              onClick={() => onPageChange(pageNum as number)}
+              aria-label={`Go to page ${pageNum}`}
+              aria-current={isCurrent ? "page" : undefined}
+              className="size-8 sm:size-9 text-xs sm:text-sm"
+            >
+              {pageNum}
+            </Button>
+          )
+        })}
       </div>
 
       <Button
         variant="outline"
         size="icon"
-        className="rounded-full size-9 border-border/50 bg-background/50 backdrop-blur-sm shadow-sm"
         onClick={() => onPageChange(Math.min(totalPages, page + 1))}
         disabled={page >= totalPages}
         aria-label="Next page"
+        className="size-8 sm:size-9"
       >
         <ChevronRight className="size-4" aria-hidden="true" />
       </Button>

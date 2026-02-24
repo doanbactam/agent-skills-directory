@@ -10,7 +10,6 @@ import {
   FileText,
   Clock,
   ShieldCheck,
-  Share2,
   Tag,
 } from "lucide-react";
 
@@ -28,7 +27,6 @@ import { Container } from "@/components/layouts/container";
 import { Section } from "@/components/layouts/section";
 import { BreadcrumbsJsonLd } from "@/components/seo/breadcrumbs-json-ld";
 import { SkillStructuredData } from "@/components/seo/skill-structured-data";
-import { BadgeSnippet } from "@/features/skills/badge-snippet";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ReportSkillDialog } from "@/features/skills/report-skill-dialog";
@@ -52,14 +50,14 @@ async function fetchSkillBody(rawUrl: string) {
 
 function RelatedSkillsFallback() {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="h-4 w-28 bg-muted rounded animate-pulse motion-reduce:animate-none" />
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-lg border border-border/50 bg-card/30 p-3">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded-lg bg-muted animate-pulse motion-reduce:animate-none" />
+        <div key={i} className="rounded-2xl border border-border/50 bg-card/30 p-4 shadow-sm backdrop-blur-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="size-11 rounded-xl bg-muted animate-pulse motion-reduce:animate-none" />
             <div className="flex-1 space-y-2">
-              <div className="h-3 w-32 bg-muted rounded animate-pulse motion-reduce:animate-none" />
+              <div className="h-3.5 w-32 bg-muted rounded animate-pulse motion-reduce:animate-none" />
               <div className="h-3 w-24 bg-muted rounded animate-pulse motion-reduce:animate-none" />
             </div>
           </div>
@@ -177,38 +175,81 @@ export default async function SkillDetailPage({ params }: PageProps) {
       </Section>
 
       <Section spacing="md">
-        <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
-          <div className="space-y-5 min-w-0">
-            <div className="relative flex items-center gap-3 group">
-              <UserAvatar
-                src={skill.avatarUrl}
-                alt={`${skill.name} by ${skill.owner}`}
-                size={40}
-                className="size-10"
-              />
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-semibold truncate leading-tight text-balance">{skill.name}</h1>
-                  {skill.securityScan && (
-                    <div className="lg:hidden shrink-0">
-                      <SecurityBadge securityScan={skill.securityScan} variant="icon" />
-                    </div>
-                  )}
+        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+          <div className="space-y-6 min-w-0">
+            <div className="flex flex-col md:flex-row md:items-start gap-5">
+              <div className="relative flex items-start sm:items-center gap-4 group flex-1 min-w-0">
+                <div className="shrink-0 mt-1 sm:mt-0">
+                  <UserAvatar
+                    src={skill.avatarUrl}
+                    alt={`${skill.name} by ${skill.owner}`}
+                    size={56}
+                    className="size-12 sm:size-14 rounded-xl shadow-sm border border-border/50 transition-transform group-hover:scale-105 duration-300"
+                  />
                 </div>
-                <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                  <span>{skill.owner}</span>
-                  {skill.isVerifiedOrg && (
-                    <ShieldCheck
-                      className="size-3.5 shrink-0 text-blue-500"
-                      aria-label="Verified"
-                    />
-                  )}
-                </p>
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate leading-tight text-balance group-hover:text-primary transition-colors">{skill.name}</h1>
+                    {skill.securityScan && (
+                      <div className="lg:hidden shrink-0">
+                        <SecurityBadge securityScan={skill.securityScan} variant="icon" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                    <p className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-muted-foreground">
+                      <Link href={`/${skill.owner}`} className="hover:text-foreground transition-colors truncate">
+                        {skill.owner}
+                      </Link>
+                      {skill.isVerifiedOrg && (
+                        <span className="inline-flex items-center" title="Verified Organization">
+                          <ShieldCheck className="size-3.5 shrink-0 text-primary fill-primary/10" aria-hidden="true" />
+                        </span>
+                      )}
+                    </p>
+                    <span className="hidden sm:inline-block text-muted-foreground/30">•</span>
+                    <div className="flex items-center gap-3 text-xs sm:text-sm font-medium text-muted-foreground">
+                      <span className="flex items-center gap-1.5" title="Stars">
+                        <Star className="size-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
+                        {formatStars(skill.stars ?? 0)}
+                      </span>
+                      <span className="flex items-center gap-1.5" title="Forks">
+                        <GitFork className="size-3.5" aria-hidden="true" />
+                        {skill.forks ?? 0}
+                      </span>
+                      <span className="flex items-center gap-1.5" title="Updated">
+                        <Clock className="size-3.5" aria-hidden="true" />
+                        {updatedLabel}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={getExternalUrl(githubUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 text-xs font-bold px-3.5 py-1.5 h-8 rounded-full border border-border/60 bg-background/50 hover:bg-muted transition-colors text-foreground"
+                >
+                  <Github className="size-3.5" aria-hidden="true" />
+                  Source
+                </a>
+                <a
+                  href={getExternalUrl(skill.rawUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 text-xs font-bold px-3.5 py-1.5 h-8 rounded-full border border-border/60 bg-background/50 hover:bg-muted transition-colors text-foreground"
+                >
+                  <ExternalLink className="size-3.5" aria-hidden="true" />
+                  Raw
+                </a>
               </div>
             </div>
 
             {skill.description && (
-              <p className="text-sm text-muted-foreground leading-relaxed break-words text-pretty">
+              <p className="text-[15px] sm:text-base text-muted-foreground/90 leading-relaxed break-words text-pretty font-normal">
                 {skill.description}
               </p>
             )}
@@ -225,17 +266,17 @@ export default async function SkillDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            <div className="rounded-lg border border-border/50 bg-card/40 overflow-hidden">
-              <div className="flex items-center gap-2 px-3.5 py-2.5 border-b border-border/40 bg-muted/30">
-                <FileText className="size-3.5 text-muted-foreground" aria-hidden="true" />
-                <span className="text-xs font-medium">Instructions</span>
+            <div className="rounded-2xl border border-border/50 bg-card/40 overflow-hidden shadow-sm backdrop-blur-sm">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40 bg-muted/30">
+                <FileText className="size-4 text-muted-foreground" aria-hidden="true" />
+                <span className="text-sm font-semibold">Instructions</span>
               </div>
-              <div className="p-3.5">
+              <div className="p-4 sm:p-5">
                 {hasBody ? (
-                  <div className="prose prose-sm dark:prose-invert max-w-none text-[13px]">
+                  <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed">
                     <React.Suspense
                       fallback={
-                        <p className="text-xs text-muted-foreground/60 text-center py-6">
+                        <p className="text-sm text-muted-foreground/60 text-center py-8">
                           Loading…
                         </p>
                       }
@@ -244,39 +285,39 @@ export default async function SkillDetailPage({ params }: PageProps) {
                     </React.Suspense>
                   </div>
                 ) : (
-                  <p className="text-xs text-muted-foreground/60 text-center py-6">
+                  <p className="text-sm text-muted-foreground/60 text-center py-8">
                     No instructions available
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="lg:hidden">
+            <div className="lg:hidden mt-8">
               <React.Suspense fallback={<RelatedSkillsFallback />}>
                 <RelatedSkillsSection skillId={skill.id} />
               </React.Suspense>
             </div>
 
             {hasTags && (
-              <div className="rounded-lg border border-border/50 bg-card/40 overflow-hidden">
-                <div className="flex items-center gap-2 px-3.5 py-2.5 border-b border-border/40 bg-muted/30">
-                  <Tag className="size-3.5 text-muted-foreground" aria-hidden="true" />
-                  <span className="text-xs font-medium">Tags & Topics</span>
+              <div className="rounded-2xl border border-border/50 bg-card/40 overflow-hidden shadow-sm backdrop-blur-sm mt-6">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40 bg-muted/30">
+                  <Tag className="size-4 text-muted-foreground" aria-hidden="true" />
+                  <span className="text-sm font-semibold">Tags & Topics</span>
                 </div>
-                <div className="p-3.5">
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="p-4 sm:p-5">
+                  <div className="flex flex-wrap gap-2">
                     {skill.compatibility && (
-                      <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full">
+                      <Badge variant="outline" className="text-xs px-2.5 py-0.5 rounded-full">
                         {skill.compatibility}
                       </Badge>
                     )}
                     {allowedTools.map((tool: string) => (
-                      <Badge key={tool} variant="secondary" className="text-[10px] px-2 py-0.5 font-mono rounded-full">
+                      <Badge key={tool} variant="secondary" className="text-xs px-2.5 py-0.5 font-mono rounded-full bg-secondary/50">
                         {tool}
                       </Badge>
                     ))}
                     {displayTopics.map((topic) => (
-                      <Badge key={topic} variant="secondary" className="text-[10px] px-2 py-0.5 rounded-full">
+                      <Badge key={topic} variant="secondary" className="text-xs px-2.5 py-0.5 rounded-full bg-secondary/50">
                         {topic}
                       </Badge>
                     ))}
@@ -286,8 +327,8 @@ export default async function SkillDetailPage({ params }: PageProps) {
             )}
           </div>
 
-          <aside className="space-y-4 lg:relative">
-            <div className="lg:sticky lg:top-20 space-y-4">
+          <aside className="space-y-5 lg:relative">
+            <div className="lg:sticky lg:top-24 space-y-5">
               {skill.securityScan && (
                 <div className="lg:block hidden">
                   <SecurityBadge securityScan={skill.securityScan} variant="full" />
@@ -296,93 +337,30 @@ export default async function SkillDetailPage({ params }: PageProps) {
 
               <Link
                 href={ownerUrl}
-                className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-card/40 p-3.5 hover:border-border hover:bg-card/80 transition-[background-color,border-color,box-shadow,color] group"
+                className="flex items-center gap-3 rounded-2xl border border-border/50 bg-card/40 p-4 hover:border-primary/30 hover:bg-card/60 transition-all duration-300 group backdrop-blur-sm shadow-sm hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/5"
               >
-                <UserAvatar
-                  src={skill.avatarUrl}
-                  alt={`${skill.owner} avatar`}
-                  size={32}
-                  className="size-8 rounded-md"
-                />
+                <div className="shrink-0 overflow-hidden rounded-xl border border-border/50 group-hover:scale-105 transition-transform duration-300">
+                  <UserAvatar
+                    src={skill.avatarUrl}
+                    alt={`${skill.owner} avatar`}
+                    size={40}
+                    className="size-10"
+                  />
+                </div>
                 <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-1 text-[13px] font-medium truncate group-hover:text-primary transition-colors">
+                  <p className="flex items-center gap-1.5 text-base font-semibold truncate group-hover:text-primary transition-colors">
                     <span className="truncate">{skill.owner}</span>
                     {skill.isVerifiedOrg && (
-                      <ShieldCheck
-                        className="size-3.5 shrink-0 text-blue-500"
-                        aria-label="Verified"
-                      />
+                      <span className="inline-flex items-center" title="Verified Organization">
+                        <ShieldCheck className="size-4 shrink-0 text-primary fill-primary/10" aria-hidden="true" />
+                      </span>
                     )}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/60">
+                  <p className="text-xs text-muted-foreground font-medium group-hover:text-muted-foreground/80 transition-colors">
                     View all skills
                   </p>
                 </div>
               </Link>
-
-              <div className="rounded-lg border border-border/50 bg-card/40 overflow-hidden">
-                <div className="flex items-center gap-2 px-3.5 py-2.5 border-b border-border/40 bg-muted/30">
-                  <Github className="size-3.5 text-muted-foreground" aria-hidden="true" />
-                  <span className="text-[11px] font-medium">Repository</span>
-                </div>
-
-                <div className="divide-y divide-border/40">
-                  <div className="flex items-center justify-between px-3.5 py-2.5 text-[11px]">
-                    <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <Star className="size-3 text-amber-500/80 fill-amber-500/80" aria-hidden="true" />
-                      Stars
-                    </span>
-                    <span className="font-medium tabular-nums">{formatStars(skill.stars ?? 0)}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between px-3.5 py-2.5 text-[11px]">
-                    <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <GitFork className="size-3" aria-hidden="true" />
-                      Forks
-                    </span>
-                    <span className="font-medium tabular-nums">{skill.forks ?? 0}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between px-3.5 py-2.5 text-[11px]">
-                    <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <Clock className="size-3" aria-hidden="true" />
-                      Updated
-                    </span>
-                    <span className="font-medium tabular-nums">{updatedLabel}</span>
-                  </div>
-
-                  <div className="flex gap-2 p-3.5">
-                    <a
-                      href={getExternalUrl(githubUrl)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1.5 text-[10px] font-medium py-1.5 rounded-md border border-border/50 bg-background/50 hover:bg-muted/50 transition-colors"
-                    >
-                      <Github className="size-3" aria-hidden="true" />
-                      Source
-                    </a>
-                    <a
-                      href={getExternalUrl(skill.rawUrl)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1.5 text-[10px] font-medium py-1.5 rounded-md border border-border/50 bg-background/50 hover:bg-muted/50 transition-colors"
-                    >
-                      <ExternalLink className="size-3" aria-hidden="true" />
-                      Raw
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-lg border border-border/50 bg-card/40 overflow-hidden">
-                <div className="flex items-center gap-2 px-3.5 py-2.5 border-b border-border/40 bg-muted/30">
-                  <Share2 className="size-3.5 text-muted-foreground" aria-hidden="true" />
-                  <span className="text-[11px] font-medium">Share this skill</span>
-                </div>
-                <div className="p-3.5">
-                  <BadgeSnippet owner={skill.owner} slug={skill.slug} />
-                </div>
-              </div>
 
               <div className="hidden lg:block">
                 <React.Suspense fallback={<RelatedSkillsFallback />}>
@@ -390,8 +368,8 @@ export default async function SkillDetailPage({ params }: PageProps) {
                 </React.Suspense>
               </div>
 
-              <div className="rounded-lg border border-border/50 bg-card/40 overflow-hidden">
-                <div className="p-3.5">
+              <div className="rounded-2xl border border-border/50 bg-card/40 overflow-hidden shadow-sm backdrop-blur-sm">
+                <div className="p-4 flex flex-col justify-center">
                   <ReportSkillDialog skillId={skill.id} skillName={skill.name} />
                 </div>
               </div>

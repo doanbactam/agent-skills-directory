@@ -24,7 +24,7 @@ const spacingClasses = {
 }
 
 function Container({
-  size = "full",
+  size = "md",
   spacing = "md",
   className,
   children,

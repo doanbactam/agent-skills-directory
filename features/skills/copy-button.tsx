@@ -48,9 +48,9 @@ function CopyButton({
         size="sm"
         onClick={handleCopy}
         className={cn(
-          "gap-2 transition-colors duration-200",
+          "gap-2 transition-colors duration-200 rounded-full bg-background/50 h-8 px-3 text-xs shadow-none border-border/60 hover:bg-muted font-medium",
           copied &&
-            "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400",
+          "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400",
           className,
         )}
         aria-label="Copy to clipboard"
@@ -100,7 +100,7 @@ function CopyButton({
       <TooltipTrigger asChild>
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="icon"
           onClick={handleCopy}
           className={cn(
             "shrink-0 transition-colors duration-200",

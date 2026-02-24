@@ -128,7 +128,7 @@ export function SkillEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border/70 bg-card p-5 shadow-2xl sm:p-6">
+      <DialogContent className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border/50 bg-card/80 backdrop-blur-xl shadow-2xl sm:p-6 p-5">
         <DialogHeader>
           <DialogTitle>Edit Skill</DialogTitle>
           <DialogDescription>
@@ -139,7 +139,7 @@ export function SkillEditDialog({
           <div className="py-8 text-center text-sm text-muted-foreground">No skill selected.</div>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
+            <div className="rounded-xl border border-border/50 bg-muted/30 backdrop-blur-sm p-3 text-xs text-muted-foreground">
               <div className="flex items-center justify-between gap-2">
                 <span className="font-medium text-foreground">
                   {skill.owner}/{skill.repo}
@@ -224,7 +224,7 @@ export function SkillEditDialog({
                       <label
                         key={category.id}
                         className={cn(
-                          "flex items-center gap-2 rounded-lg border p-2 cursor-pointer transition-colors",
+                          "flex items-center gap-2 rounded-xl border p-2 cursor-pointer transition-colors",
                           isSelected
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"

@@ -11,7 +11,7 @@ function HeaderAuth() {
     <div className="ml-2 flex min-w-[112px] items-center justify-end gap-2">
       <SignedOut>
         <SignInButton mode="modal">
-          <Button variant="outline" size="sm" className="gap-1.5">
+          <Button variant="outline" size="sm">
             <LogIn
               strokeWidth={2}
               aria-hidden="true"

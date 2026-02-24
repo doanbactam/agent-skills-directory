@@ -21,12 +21,11 @@ function Header() {
   const navItems: Array<{ label: string; href: string }> = [
     { label: "Browse", href: "/skills" },
     { label: "Categories", href: "/categories" },
-    { label: "Ranking", href: "/ranking" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
         <Link href="/" prefetch={false} className="flex items-center gap-2.5">
           <SiteLogo size={32} className="shadow-sm" />
           <div className="leading-tight">
@@ -38,7 +37,7 @@ function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
           {navItems.map((item) => (
-            <Button key={item.label} variant="ghost" size="sm" asChild>
+            <Button key={item.label} variant="ghost" size="sm" className="rounded-xl" asChild>
               <Link href={item.href} prefetch={false}>{item.label}</Link>
             </Button>
           ))}

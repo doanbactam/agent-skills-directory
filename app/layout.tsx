@@ -82,7 +82,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* Analytics script loaded lazily via LazyAnalytics component */}
         </head>
         <body
-          className="antialiased bg-background text-foreground flex min-h-screen flex-col bg-dot-pattern"
+          className="antialiased bg-background text-foreground flex min-h-screen flex-col"
         >
           <NuqsAdapter>
             <TooltipProvider delay={350} closeDelay={100}>

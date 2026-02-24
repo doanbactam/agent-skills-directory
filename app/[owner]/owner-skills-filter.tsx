@@ -287,7 +287,7 @@ function OwnerSkillsFilter({ owner, skills, categories }: OwnerSkillsFilterProps
             <div className="flex items-center justify-center gap-1 py-2">
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="icon"
                 onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page <= 1}
                 aria-label="Previous page"
@@ -311,7 +311,7 @@ function OwnerSkillsFilter({ owner, skills, categories }: OwnerSkillsFilterProps
                   <Button
                     key={pageNum}
                     variant={page === pageNum ? "default" : "ghost"}
-                    size="icon-sm"
+                    size="icon"
                     onClick={() => setPage(pageNum)}
                     className={cn(page === pageNum && "pointer-events-none")}
                     aria-label={`Go to page ${pageNum}`}
@@ -324,7 +324,7 @@ function OwnerSkillsFilter({ owner, skills, categories }: OwnerSkillsFilterProps
 
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="icon"
                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page >= totalPages}
                 aria-label="Next page"

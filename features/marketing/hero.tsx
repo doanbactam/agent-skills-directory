@@ -1,14 +1,8 @@
 ﻿import Link from "next/link"
-import { Search, Star, Terminal } from "lucide-react"
+import { Terminal } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Logo, type LogoName } from "@/components/ui/logo"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import type { HealthStatus } from "@/lib/health"
 
 type HeroStats = {
@@ -34,141 +28,67 @@ const TOOLS: { name: LogoName; label: string }[] = [
   { name: "windsurf", label: "Windsurf" },
   { name: "cline", label: "Cline" },
   { name: "amp", label: "Amp" },
-  { name: "githubcopilot", label: "GitHub Copilot" },
-  { name: "gemini", label: "Gemini" },
-  { name: "opencode", label: "OpenCode" },
-  { name: "trae", label: "Trae" },
+  { name: "githubcopilot", label: "Copilot" },
 ]
-
-function ProviderLogo({ name, label }: { name: LogoName; label: string }) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div className="flex size-10 items-center justify-center rounded-xl bg-background shadow-sm border border-border/50 transition-transform hover:scale-105">
-          <Logo name={name} size={20} aria-label={label} />
-        </div>
-      </TooltipTrigger>
-      <TooltipContent>
-        {label}
-      </TooltipContent>
-    </Tooltip>
-  )
-}
 
 function Hero({ stats = { total: 0, updatedToday: 0 }, healthStatus }: HeroProps) {
   const healthState = healthStatus?.status ?? "unknown"
-  const healthLabel =
-    healthState === "healthy" ? "Healthy" : healthState === "unhealthy" ? "Unhealthy" : "Unknown"
-  const healthDotClassName =
-    healthState === "healthy"
-      ? "bg-emerald-500"
-      : healthState === "unhealthy"
-        ? "bg-rose-500"
-        : "bg-muted-foreground/50"
-  const healthLatency = typeof healthStatus?.latencyMs === "number"
-    ? Math.round(healthStatus.latencyMs)
-    : null
-  const healthTitle = healthLatency ? `DB latency ${healthLatency}ms` : "Health status"
+  const healthLabel = healthState === "healthy" ? "healthy" : healthState === "unhealthy" ? "unhealthy" : "unknown"
+  const healthTextColor = healthState === "healthy" ? "text-emerald-500" : healthState === "unhealthy" ? "text-rose-500" : "text-muted-foreground"
 
   return (
     <section
       aria-labelledby="hero-heading"
-      className="rounded-2xl border border-border/40 bg-gradient-to-br from-background via-background to-primary/5 p-6 sm:p-10 shadow-sm"
+      className="mb-8 font-mono text-sm border border-border/50 bg-card/40 backdrop-blur-sm rounded-[1.25rem] overflow-hidden shadow-sm"
     >
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-6 flex-1">
-          <div className="space-y-4">
-            <h1
-              id="hero-heading"
-              className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl text-foreground"
-            >
-              <span className="text-primary bg-primary/10 px-2 rounded-md -ml-2 mr-1 inline-block transform -skew-x-3">Agent skills</span> directory for coding assistants
-            </h1>
-            <p className="text-base text-muted-foreground leading-relaxed text-pretty max-w-2xl">
-              Discover SKILL.md workflows from GitHub, compare stars and updates, and install agent skills for Claude Code, Cursor, Windsurf, and more.
-            </p>
-          </div>
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/40 bg-muted/30">
+        <div className="flex items-center gap-2">
+          <span className="text-primary font-bold">{">_"}</span>
+          <span className="text-muted-foreground font-semibold tracking-tight">sys@agnxi:~$ ./discover-skills.sh</span>
+        </div>
+        <div className="hidden sm:flex items-center gap-3.5 opacity-60 grayscale hover:grayscale-0 transition-all duration-300">
+          {TOOLS.map((tool) => (
+            <Logo key={tool.name} name={tool.name} size={15} aria-label={tool.label} />
+          ))}
+        </div>
+      </div>
 
-          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-background border border-border/50">
-              <span className="font-semibold text-foreground">
-                {stats.total > 0 ? formatNumber(stats.total) : "--"}
-              </span>{" "}
-              skills
-            </span>
-            {stats.updatedToday > 0 && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400">
-                <span className="size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
-                <span className="font-medium">{stats.updatedToday}</span> updated today
-              </span>
-            )}
-            <Badge variant="outline" className="gap-1.5 h-auto py-1 px-3 border-border/60 bg-background/60 backdrop-blur-sm" title={healthTitle}>
-              <span className={`size-2 rounded-full ${healthDotClassName}`} aria-hidden="true" />
-              <span>System {healthLabel}</span>
-            </Badge>
-          </div>
+      <div className="p-6 sm:p-8 space-y-6">
+        <div className="space-y-3">
+          <h1
+            id="hero-heading"
+            className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2.5"
+          >
+            <span className="text-primary">{">"}</span> Agent Skills Directory
+          </h1>
+          <p className="max-w-2xl text-muted-foreground text-sm sm:text-[15px] leading-relaxed">
+            Discover, compare, and install SKILL.md workflows for your coding assistants.
+          </p>
+        </div>
 
-          <div className="flex items-center gap-3 pt-2 overflow-x-auto pb-2 scrollbar-hide mask-linear">
-            {TOOLS.map((tool) => (
-              <ProviderLogo key={tool.name} name={tool.name} label={tool.label} />
-            ))}
+        <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm font-medium">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-background/50 rounded-xl border border-border/50 text-foreground shadow-sm">
+            <span className="text-primary">total_skills:</span> {stats.total > 0 ? formatNumber(stats.total) : "--"}
           </div>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Button size="default" className="shadow-md hover:shadow-lg transition-all" asChild>
-              <Link href="/agent-skills">Read the Agent Skills Guide</Link>
-            </Button>
-            <Button size="default" variant="outline" className="bg-background/50 backdrop-blur-sm hover:bg-background" asChild>
-              <Link href="/skills">Browse Agent Skills</Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size="default"
-              asChild
-            >
-              <Link href="/categories">
-                View Categories
-              </Link>
-            </Button>
+          {stats.updatedToday > 0 && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl shadow-sm">
+              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              updated_today: {stats.updatedToday}
+            </div>
+          )}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-background/50 rounded-xl border border-border/50 text-foreground shadow-sm">
+            <span className="text-primary">sys_status:</span>
+            <span className={healthTextColor}>{healthLabel}</span>
           </div>
         </div>
 
-        <div className="space-y-6 lg:w-[320px] bg-background/40 backdrop-blur-sm rounded-xl p-5 border border-border/30">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <div className="p-1.5 rounded-md bg-primary/10 text-primary">
-                <Search className="size-4" aria-hidden="true" />
-              </div>
-              Discover
-            </div>
-            <p className="text-xs text-muted-foreground text-pretty pl-9">
-              Find agent skills for Claude Code, Cursor, Windsurf, and more.
-            </p>
-          </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500">
-                <Star className="size-4" aria-hidden="true" />
-              </div>
-              Compare
-            </div>
-            <p className="text-xs text-muted-foreground text-pretty pl-9">
-              Review stars, forks, and recent updates before you install.
-            </p>
-          </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <div className="p-1.5 rounded-md bg-emerald-500/10 text-emerald-500">
-                <Terminal className="size-4" aria-hidden="true" />
-              </div>
-              Install
-            </div>
-            <p className="text-xs text-muted-foreground text-pretty pl-9">
-              Copy the install command and run it in your tool or terminal.
-            </p>
-          </div>
+        <div className="flex flex-wrap gap-3 pt-3">
+          <Button asChild className="rounded-xl px-6 shadow-sm font-semibold">
+            <Link href="/skills">{"[ Browse Skills ]"}</Link>
+          </Button>
+          <Button variant="outline" asChild className="rounded-xl px-6 shadow-sm font-semibold bg-background/50">
+            <Link href="/agent-skills">{"[ Read Guide ]"}</Link>
+          </Button>
         </div>
       </div>
     </section>
@@ -176,3 +96,4 @@ function Hero({ stats = { total: 0, updatedToday: 0 }, healthStatus }: HeroProps
 }
 
 export { Hero }
+
