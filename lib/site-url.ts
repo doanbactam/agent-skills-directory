@@ -20,5 +20,5 @@ export function getSiteUrl() {
     return normalizeUrl(publicUrl)
   }
 
-  return "http://localhost:3000"
+  return "https://agnxi.com"
 }

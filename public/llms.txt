@@ -1,83 +1,102 @@
 # AGNXI - Agent Skills Directory
 
-> Agent skills directory for coding assistants. Discover SKILL.md workflows and install skills for Claude Code, Cursor, Windsurf, Amp, and more.
+> Agent skills directory for coding assistants. Discover SKILL.md workflows, compare stars and updates, and install skills for Claude Code, Cursor, Windsurf, Amp, and more.
 
 ## Summary
 
-AGNXI is a community-driven agent skills directory hosted on public GitHub repositories. It helps developers discover, evaluate, and install SKILL.md workflows for popular AI coding assistants including Claude Code, Amp Code, Cursor, Windsurf, and more.
+AGNXI is a community-driven agent skills directory hosted on public GitHub repositories. It helps developers discover, evaluate, and install SKILL.md workflows for popular AI coding assistants including Claude Code, Amp Code, Cursor, Windsurf, GitHub Copilot, OpenAI Codex, and more.
+
+Skills are indexed automatically from GitHub, categorized via AI and keyword matching, and displayed with stars, last-updated timestamps, and compatibility signals so developers can quickly compare options.
 
 ## Key Pages
 
-- `/` - Home page with featured skills and search
-- `/agent-skills` - Agent skills guide and FAQ
-- `/skills` - Browse all skills with search and filters
-- `/skills/[owner]/[slug]` - Individual skill detail page
-- `/categories` - Browse skills by category
-- `/categories/[slug]` - Skills filtered by specific category
-- `/[owner]` - Owner/organization profile with their skills
-- `/ranking` - Skills ranking by popularity
-- `/submit` - Submit a new skill to the directory
-- `/about` - About the project
-- `/privacy` - Privacy policy
-- `/cookies` - Cookie policy
-- `/terms` - Terms of service
+- `/` — Home page with featured skills, search, and category highlights
+- `/skills` — Browse all skills with full-text search, category filters, and sorting
+- `/agent-skills` — Agent skills guide and FAQ
+- `/categories` — Browse skills organized by category
+- `/categories/[slug]` — Skills filtered by a specific category
+- `/[owner]` — Owner/organization profile with their published skills
+- `/[owner]/skills/[name]` — Individual skill detail page
+- `/about` — About the project
+- `/privacy` — Privacy policy
+- `/cookies` — Cookie policy
+- `/terms` — Terms of service
 
 ## Categories
 
 Skills are organized into the following categories:
 
-- **LLMs & Models** - AI, LLMs, and machine learning tools
-- **Data & Analytics** - Data processing, analytics, and database tools
-- **Coding & Development** - Frontend, backend, and fullstack development
-- **Mobile** - iOS, Android, and cross-platform mobile development
-- **Automation & Agents** - CI/CD, workflows, and automation tools
-- **Security** - Authentication, encryption, and security tools
-- **Dev Tools** - Git, CLI, editors, and developer utilities
-- **Business & Productivity** - Workflow and productivity tools
-- **Writing & Content** - CMS, documentation, and content tools
-- **Design & Creative** - UI/UX design and creative tools
+- **LLMs & Models** — AI, LLMs, and machine learning tools
+- **Data & Analytics** — Data processing, analytics, and database tools
+- **Coding & Development** — Frontend, backend, and fullstack development
+- **Mobile** — iOS, Android, and cross-platform mobile development
+- **Automation & Agents** — CI/CD, workflows, and automation tools
+- **Security** — Authentication, encryption, and security tools
+- **Dev Tools** — Git, CLI, editors, and developer utilities
+- **Business & Productivity** — Workflow and productivity tools
+- **Writing & Content** — CMS, documentation, and content tools
+- **Design & Creative** — UI/UX design and creative tools
 
 ## API Endpoints
 
 Public API endpoints for programmatic access:
 
-- `GET /api/skills` - List skills with optional filters (q, categories, owner, status)
-- `GET /api/categories` - List all categories
-- `GET /api/owners/[owner]` - Get owner profile and skills
-- `GET /api/stats` - Get site statistics
+- `GET /api/skills` — List skills with optional filters (`q`, `categories`, `owner`, `status`)
+- `GET /api/categories` — List all categories
+- `GET /api/owners/[owner]` — Get owner profile and skills
+- `GET /api/stats` — Get site statistics
+- `GET /api/health` — Health check endpoint
 
 ## Feeds
 
-- `/feed.xml` - RSS feed of latest skills
-- `/atom.xml` - Atom feed of latest skills
-- `/sitemap.xml` - XML sitemap for search engines
+- `/feed.xml` — RSS feed of latest skills
+- `/atom.xml` — Atom feed of latest skills
+- `/sitemap.xml` — XML sitemap for search engines
 
 ## Content Structure
 
 ### Skill Detail Pages
-Each skill page includes:
+
+Each skill page (`/[owner]/skills/[name]`) includes:
+
 - Name, description, and author information
 - GitHub repository link and star count
 - Full SKILL.md content rendered as markdown
-- Installation instructions
+- Installation instructions for supported coding assistants
+- Category tags and compatibility badges
 - Related skills in the same category
 - Report functionality for inappropriate content
 
 ### Owner Profile Pages
-Owner pages display:
+
+Owner pages (`/[owner]`) display:
+
 - GitHub profile information (avatar, name, bio)
-- List of all skills published by that owner/organization
-- Verified organization badge (if applicable)
+- List of all skills published by that owner or organization
+- Searchable and filterable skill list
+
+### Category Pages
+
+Category pages (`/categories/[slug]`) show:
+
+- Category name and description
+- All skills in that category with search and sort controls
+- Skill count and aggregate statistics
 
 ## Technical Details
 
 - Built with Next.js 16 and React 19
+- Styled with Tailwind CSS v4
 - Data synced from public GitHub repositories
-- Skills are curated via community submissions
-- Categories assigned automatically via AI and keyword matching
+- PostgreSQL database via Drizzle ORM
+- Authentication via Clerk
+- Background jobs powered by Inngest
+- AI categorization via Google Gemini
+- Rate limiting via Upstash Redis
+- Full-text search with URL-synced state (nuqs)
 
 ## Contact
 
 - Website: https://agnxi.com
-- GitHub: https://github.com/doanbactam/kk
-- Twitter: @agnxi
+- GitHub: https://github.com/doanbactam/agent-skills-directory
+- Twitter: https://x.com/agnxi

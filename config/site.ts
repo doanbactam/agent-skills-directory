@@ -6,7 +6,7 @@ export const siteConfig = {
   ogImage: "https://agnxi.com/og.png",
   twitterHandle: "@agnxi",
   links: {
-    github: "https://github.com/doanbactam/kk",
+    github: "https://github.com/doanbactam/agent-skills-directory",
     twitter: "https://x.com/agnxi",
   },
   keywords: [
