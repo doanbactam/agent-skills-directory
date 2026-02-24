@@ -286,7 +286,7 @@ app/              # Next.js App Router pages
 components/       # React components
   ui/            # Reusable UI components (shadcn-style)
 lib/             # Utility functions
-proxy.ts          # Next.js Proxy entry (replaces middleware)
+middleware.ts     # Next.js Middleware (handles request-level logic)
 next.config.ts   # Next.js config
 tsconfig.json    # TypeScript config
 eslint.config.mjs # ESLint config
@@ -305,8 +305,8 @@ eslint.config.mjs # ESLint config
 
 ## Additional Notes
 
-- Next.js 16 dung `proxy.ts` (Proxy) thay cho `middleware.ts` trong project nay
-- Chi co mot `proxy.ts` o root, moi logic request-level dat tai day (co the tach module roi import)
+- Next.js 16 dung `middleware.ts` (standard) thay cho `proxy.ts` (đã bị loại bỏ)
+- Chi co mot `middleware.ts` o root, moi logic request-level dat tai day (co the tach module roi import)
 - Project sử dụng Next.js 16 với App Router
 - Tailwind CSS v4 với CSS-first configuration
 - No testing framework configured - ask user before adding tests
