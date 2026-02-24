@@ -122,21 +122,21 @@ function buildSearchConditions(query: string) {
   if (!query || query.length === 0 || query.length > 200) {
     throw new Error("Invalid query: empty or too long")
   }
-  
+
   // Sanitize query for ILIKE - escape special SQL LIKE characters (% _ \)
   // This prevents SQL injection via LIKE pattern matching
   const likeEscaped = escapeLikePattern(query)
-  
+
   // Sanitize query for full-text search - remove special characters that break tsquery
   // Keep only alphanumeric and spaces (Unicode-aware)
   const sanitized = query.trim().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim()
-  
+
   // Defense in depth: Validate sanitized string is reasonable length
   // Even after sanitization, ensure it's not suspiciously long
   if (sanitized.length > 200) {
     throw new Error("Invalid query: sanitized string too long")
   }
-  
+
   // If no valid words after sanitization, fall back to ILIKE only
   // This is safe because likeEscaped is properly escaped
   if (!sanitized || sanitized.length === 0) {
@@ -146,7 +146,7 @@ function buildSearchConditions(query: string) {
       ilike(skills.description, `%${likeEscaped}%`)
     )
   }
-  
+
   // Use websearch_to_tsquery which handles user input safely (available in PostgreSQL 11+)
   // It automatically handles quotes, operators, and special characters, preventing injection
   // The sanitized string is passed as a parameter, not concatenated into SQL
@@ -168,9 +168,9 @@ function buildCategorySubquery(categorySlugs: string[]) {
     FROM ${skillCategories} 
     INNER JOIN ${categories} ON ${skillCategories.categoryId} = ${categories.id}
     WHERE ${categories.slug} IN (${sql.join(
-      categorySlugs.map((s) => sql`${s}`),
-      sql`, `
-    )})
+    categorySlugs.map((s) => sql`${s}`),
+    sql`, `
+  )})
   )`
 }
 
@@ -256,7 +256,7 @@ export async function getSkills(options: GetSkillsOptions = {}) {
       // Log error for debugging but don't expose details to prevent information leakage
       const errorMessage = error instanceof Error ? error.message : "Unknown error"
       console.error("Search condition build error:", errorMessage)
-      
+
       // Defense in depth: If buildSearchConditions fails, use safe fallback
       // Escape the query to prevent SQL injection even in fallback path
       const escapedQuery = escapeLikePattern(safeQuery)
@@ -347,7 +347,7 @@ export async function getSkills(options: GetSkillsOptions = {}) {
   ])
 
   const total = Number(countResult[0]?.count ?? 0)
-  
+
   const skillsListRowSchema = z.object({
     id: z.string(),
     name: z.string(),
@@ -435,7 +435,7 @@ export async function getSkillBySlug(owner: string, slug: string) {
 export async function getSkillsByOwner(owner: string): Promise<Array<Skill & { categories: CategorySummary[]; category: CategorySummary | null; updatedAtLabel: string | null }>> {
   if (process.env.SKIP_ENV_VALIDATION) return []
   const skillsList = await db.select().from(skills).where(eq(skills.owner, owner)).orderBy(desc(skills.stars), desc(skills.id))
-  
+
   const dedupedSkills: Array<Skill & { updatedAtLabel: string | null }> = dedupeSkillsByOwnerSlug(skillsList).map((skill) => ({
     ...skill,
     updatedAtLabel: formatShortDate(skill.fileUpdatedAt ?? skill.repoUpdatedAt),
@@ -445,19 +445,19 @@ export async function getSkillsByOwner(owner: string): Promise<Array<Skill & { c
   const skillIds = dedupedSkills.map((s) => s.id)
   const categoryRelations = skillIds.length > 0
     ? await db
-        .select({
-          skillId: skillCategories.skillId,
-          categoryId: skillCategories.categoryId,
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-          description: categories.description,
-          color: categories.color,
-          order: categories.order,
-        })
-        .from(skillCategories)
-        .innerJoin(categories, eq(skillCategories.categoryId, categories.id))
-        .where(inArray(skillCategories.skillId, skillIds))
+      .select({
+        skillId: skillCategories.skillId,
+        categoryId: skillCategories.categoryId,
+        id: categories.id,
+        name: categories.name,
+        slug: categories.slug,
+        description: categories.description,
+        color: categories.color,
+        order: categories.order,
+      })
+      .from(skillCategories)
+      .innerJoin(categories, eq(skillCategories.categoryId, categories.id))
+      .where(inArray(skillCategories.skillId, skillIds))
     : []
 
   // Create a map of skillId to categories
@@ -849,12 +849,12 @@ export async function getSkillsByIds(ids: string[]) {
  */
 export async function getExistingSkillIds(ids: string[]): Promise<Set<string>> {
   if (ids.length === 0) return new Set()
-  
+
   const results = await db
     .select({ id: skills.id })
     .from(skills)
     .where(inArray(skills.id, ids))
-  
+
   return new Set(results.map((r) => r.id))
 }
 
@@ -1036,87 +1036,5 @@ export async function setLastDiscoveryDate(date: Date): Promise<void> {
   await setSyncState(SYNC_STATE_KEYS.LAST_DISCOVERY_PUSHED_AT, date.toISOString())
 }
 
-export type OwnerRanking = {
-  owner: string
-  avatarUrl: string | null
-  totalSkills: number
-  totalStars: number
-  totalForks: number
-  isVerifiedOrg: boolean
-}
 
-export async function getOwnerRankings(options: {
-  sortBy?: "stars" | "skills" | "forks"
-  limit?: number
-} = {}): Promise<OwnerRanking[]> {
-  if (process.env.SKIP_ENV_VALIDATION) return []
-  const { sortBy = "stars", limit = 100 } = options
 
-  const orderColumn =
-    sortBy === "skills"
-      ? sql.raw("total_skills")
-      : sortBy === "forks"
-        ? sql.raw("total_forks")
-        : sql.raw("total_stars")
-
-  const safeLimit = Math.min(Math.max(1, Math.floor(limit)), 500)
-
-  const result = await db.execute(sql`
-    WITH unique_repos AS (
-      SELECT
-        owner,
-        repo,
-        MAX(avatar_url) as avatar_url,
-        MAX(COALESCE(stars, 0)) as stars,
-        MAX(COALESCE(forks, 0)) as forks
-      FROM skills
-      WHERE status IN ('approved', 'pending')
-      GROUP BY owner, repo
-    ),
-    skill_counts AS (
-      SELECT owner, COUNT(DISTINCT slug) as total_skills
-      FROM skills
-      WHERE status IN ('approved', 'pending')
-      GROUP BY owner
-    ),
-    owner_verified AS (
-      SELECT owner, BOOL_OR(is_verified_org) as is_verified_org
-      FROM skills
-      WHERE status IN ('approved', 'pending')
-      GROUP BY owner
-    )
-    SELECT
-      r.owner,
-      MAX(r.avatar_url) as avatar_url,
-      COALESCE(sc.total_skills, 0) as total_skills,
-      COALESCE(SUM(r.stars), 0) as total_stars,
-      COALESCE(SUM(r.forks), 0) as total_forks,
-      COALESCE(ov.is_verified_org, false) as is_verified_org
-    FROM unique_repos r
-    LEFT JOIN skill_counts sc ON sc.owner = r.owner
-    LEFT JOIN owner_verified ov ON ov.owner = r.owner
-    GROUP BY r.owner, sc.total_skills, ov.is_verified_org
-    ORDER BY ${orderColumn} DESC
-    LIMIT ${safeLimit}
-  `)
-
-  const ownerRankingRowSchema = z.object({
-    owner: z.string(),
-    avatar_url: z.string().nullable(),
-    total_skills: dbNumber,
-    total_stars: dbNumber,
-    total_forks: dbNumber,
-    is_verified_org: z.boolean(),
-  })
-
-  const rows = parseDbRows(ownerRankingRowSchema, result, "getOwnerRankings")
-
-  return rows.map((r) => ({
-    owner: r.owner,
-    avatarUrl: r.avatar_url,
-    totalSkills: Number(r.total_skills),
-    totalStars: Number(r.total_stars),
-    totalForks: Number(r.total_forks),
-    isVerifiedOrg: Boolean(r.is_verified_org),
-  }))
-}
