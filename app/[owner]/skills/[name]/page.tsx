@@ -368,10 +368,8 @@ export default async function SkillDetailPage({ params }: PageProps) {
                 </React.Suspense>
               </div>
 
-              <div className="rounded-2xl border border-border/50 bg-card/40 overflow-hidden shadow-sm backdrop-blur-sm">
-                <div className="p-4 flex flex-col justify-center">
-                  <ReportSkillDialog skillId={skill.id} skillName={skill.name} />
-                </div>
+              <div className="flex justify-center pt-1">
+                <ReportSkillDialog skillId={skill.id} skillName={skill.name} />
               </div>
             </div>
           </aside>

@@ -24,13 +24,14 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   compress: true, // Enable gzip/brotli compression to reduce egress
   poweredByHeader: false,
+  serverExternalPackages: ["@clerk/nextjs"],
   turbopack: {
     root: __dirname,
   },
 
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ["@clerk/nextjs"],
+    optimizePackageImports: ["lucide-react"],
   },
   images: {
     remotePatterns: (() => {

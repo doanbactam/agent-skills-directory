@@ -75,9 +75,9 @@ function ReportSkillDialog({ skillId, skillName }: ReportSkillDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm">
-          <Flag className="size-3.5 mr-1" aria-hidden="true" />
-          Report
+        <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground gap-1.5 h-auto py-1 px-2">
+          <Flag className="size-3" aria-hidden="true" />
+          Report skill
         </Button>
       </DialogTrigger>
       <DialogContent>

@@ -1,35 +1,167 @@
-# AGENTS.md - Quy tắc dự án cho AI Agents
+# AGENTS.md - Project Rules for AI Agents
 
 ## Overview
 
-Dự án này là Next.js 16.1.4 với React 19, TypeScript 5, và Tailwind CSS 4. Dùng cho agentic coding workflows.
+**AGNXI** is an agent skills directory for coding assistants. Users discover SKILL.md workflows, compare stars/updates, and install skills for Claude Code, Cursor, Windsurf, Amp, and more.
+
+### Tech Stack
+
+| Layer | Technology | Version |
+|---|---|---|
+| Framework | Next.js (App Router, Turbopack) | 16.1.6 |
+| UI | React | 19.2.4 |
+| Language | TypeScript (strict mode) | 5.9 |
+| Styling | Tailwind CSS v4 (CSS-first) + shadcn | 4.2 |
+| CSS Tooling | PostCSS with `@tailwindcss/postcss` | — |
+| UI Primitives | Base UI (`@base-ui/react`) | 1.1 |
+| Variants | class-variance-authority (CVA) | 0.7 |
+| Icons | lucide-react | 0.575 |
+| Auth | Clerk (`@clerk/nextjs`) | 6.38 |
+| Database | PostgreSQL via Drizzle ORM | 0.45 |
+| AI | Vercel AI SDK + Google Gemini (`@ai-sdk/google`) | 6.0 |
+| Background Jobs | Inngest | 3.52 |
+| Rate Limiting | Upstash Redis (`@upstash/ratelimit`) | 2.0 |
+| URL State | nuqs | 2.8 |
+| Env Validation | `@t3-oss/env-nextjs` + Zod v4 | — |
+| Toasts | Sonner | 2.0 |
+| Markdown | react-markdown + remark-gfm | — |
+| Analytics | `@next/third-parties` | 16.1 |
+| Tables | `@tanstack/react-table` | 8.21 |
+| Runtime | Bun (package manager + runtime) | — |
+| Node | ≥ 20.0.0 | — |
 
 ---
 
 ## Commands
 
-**LUÔN sử dụng Bun thay cho npm/yarn/pnpm**
+**ALWAYS use Bun instead of npm/yarn/pnpm.**
 
 ```bash
 # Development
-bun dev              # Start dev server
+bun dev                    # Start dev server (port 4000, Turbopack)
 
-# Build
-bun build            # Production build
-bun start            # Start production server
+# Build & Production
+bun build                  # Production build
+bun start                  # Start production server (port 4000)
 
-# Linting/Typecheck
-bun lint             # Run ESLint (sau khi thay đổi code)
-bun run lint         # Alternative lint command
+# Linting
+bun lint                   # Run ESLint (always run after code changes)
 
-# Tests (không có trong project này)
-# Không có test commands được cấu hình
+# Database (Drizzle ORM)
+bun db:generate            # Generate Drizzle migrations
+bun db:migrate             # Run Drizzle migrations
+bun db:push                # Push schema directly to database
+bun db:studio              # Open Drizzle Studio (visual DB browser)
+bun db:seed:categories     # Seed category data
+
+# Tests
+# No test framework is currently configured.
+# Ask the user before adding any testing setup.
 ```
 
-**Lưu ý quan trọng:**
-- Luôn chạy `bun lint` sau khi thay đổi code quan trọng
-- Không có test framework trong dự án hiện tại
-- Nếu cần thêm tests, hãy hỏi người dùng về preferred testing setup
+**Important notes:**
+- Always run `bun lint` after significant code changes
+- Dev server runs on port **4000** (not default 3000)
+- Turbopack is the default bundler in dev mode
+- The `postinstall` script auto-generates Drizzle migrations
+
+---
+
+## Project Structure
+
+```
+app/                      # Next.js App Router
+├── (auth)/               # Auth routes (sign-in, sign-up)
+├── [owner]/              # Dynamic owner pages
+├── about/                # About page
+├── admin/                # Admin dashboard (role-protected)
+├── agent-skills/         # Agent skills listing
+├── api/                  # API routes
+│   ├── admin/            # Admin API endpoints
+│   ├── inngest/          # Inngest webhook handler
+│   ├── skills/           # Skills CRUD API
+│   ├── webhooks/         # GitHub webhooks
+│   ├── health/           # Health check
+│   ├── stats/            # Stats endpoint
+│   ├── owners/           # Owner data
+│   └── categories/       # Category data
+├── categories/           # Category pages
+├── skills/               # Skill detail pages
+├── globals.css           # Tailwind v4 theme (oklch tokens, shadcn vars)
+├── layout.tsx            # Root layout (fonts, Clerk, analytics)
+├── page.tsx              # Homepage
+├── sitemap.ts            # Dynamic sitemap generation
+├── error.tsx             # Error boundary
+└── not-found.tsx         # 404 page
+
+components/               # Shared React components
+├── ui/                   # Reusable UI primitives (shadcn-style)
+│   ├── button.tsx        # Button with CVA variants
+│   ├── dialog.tsx        # Base UI Dialog wrapper
+│   ├── select.tsx        # Base UI Select wrapper
+│   ├── dropdown-menu.tsx # Base UI Menu wrapper
+│   ├── input.tsx         # Input component
+│   ├── card.tsx          # Card layout
+│   ├── badge.tsx         # Badge with variants
+│   ├── tooltip.tsx       # Tooltip component
+│   ├── data-table.tsx    # TanStack Table wrapper
+│   ├── sheet.tsx         # Slide-out panel
+│   ├── sonner.tsx        # Toast provider
+│   └── ...               # 23 UI components total
+├── layouts/              # Page layout components
+├── seo/                  # SEO components (JSON-LD, meta)
+├── analytics/            # Analytics integration
+├── faq/                  # FAQ components
+└── error-boundary.tsx    # Client error boundary
+
+features/                 # Feature modules (domain logic)
+├── skills/               # Skills grid, filters, search
+├── submissions/          # Skill submission flow
+└── marketing/            # Landing page components
+
+lib/                      # Shared utilities and logic
+├── db/                   # Database layer
+│   ├── schema.ts         # Drizzle schema (skills, categories, syncJobs, etc.)
+│   ├── queries.ts        # Database queries
+│   ├── client.ts         # Drizzle client setup
+│   ├── transaction.ts    # Transaction helpers
+│   ├── errors.ts         # Database error handling
+│   └── seed-categories.ts
+├── actions/              # Server Actions
+├── ai/                   # AI integration (Gemini)
+├── inngest/              # Inngest functions
+├── hooks/                # Custom React hooks
+├── categories/           # Category utilities
+├── features/             # Feature flags
+├── validators/           # Zod validation schemas
+├── env.ts                # Environment validation (@t3-oss/env-nextjs)
+├── auth.ts               # Auth helpers (Clerk)
+├── redis.ts              # Upstash Redis client
+├── rate-limit.ts         # Rate limiting logic
+├── server-cache.ts       # Server-side caching
+├── seo.ts                # SEO utilities
+├── stats.ts              # Stats calculations
+├── site-url.ts           # URL helpers
+└── utils.ts              # cn() and general utilities
+
+config/                   # Application configuration
+├── site.ts               # Site metadata (name, URL, social links)
+└── image-hosts.ts        # Allowed image remote patterns
+
+drizzle/                  # Generated Drizzle migration files
+types/                    # Shared TypeScript type definitions
+├── index.ts              # App-wide types
+└── clerk.d.ts            # Clerk type extensions
+scripts/                  # Build and utility scripts
+public/                   # Static assets (favicon, images)
+
+proxy.ts                  # Request proxy (replaces middleware.ts in Next.js 16)
+next.config.ts            # Next.js configuration
+tsconfig.json             # TypeScript configuration (strict mode)
+eslint.config.mjs         # ESLint (core-web-vitals + typescript)
+drizzle.config.ts         # Drizzle ORM config (PostgreSQL)
+postcss.config.mjs        # PostCSS config (@tailwindcss/postcss)
+```
 
 ---
 
@@ -38,66 +170,66 @@ bun run lint         # Alternative lint command
 ### Imports & File Organization
 
 ```typescript
-// React imports (luôn dùng * as React)
+// 1. React imports (always use * as React)
 import * as React from "react"
 
-// Third-party packages
+// 2. Third-party packages
 import { cva, type VariantProps } from "class-variance-authority"
 import { Dialog, Select, Menu } from "@base-ui/react"
 import { Plus, Bluetooth } from "lucide-react"
 
-// Local imports (sử dụng @/* alias)
+// 3. Local imports (use @/* alias)
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 ```
 
-**Quy tắc imports:**
-- React import: `import * as React from "react"` (KHÔNG dùng `import React from "react"`)
-- Local imports: Luôn dùng `@/` alias (ví dụ: `@/lib/utils`, `@/components/ui/button`)
-- Group imports theo thứ tự: React → Third-party → Local
-- Type imports: Sử dụng `import { type X }` cho type-only imports
+**Import rules:**
+- React: `import * as React from "react"` (DO NOT use `import React from "react"`)
+- Local: Always use the `@/` path alias (maps to project root)
+- Order: React → Third-party → Local
+- Types: Use `import { type X }` for type-only imports
 
 ### Component Declarations
 
 ```typescript
-// ✅ CORRECT: Function declarations với named exports
+// ✅ Function declarations with named exports
 function Button({ className, ...props }: React.ComponentProps<"button">) {
   return <button className={cn("base-classes", className)} {...props} />
 }
 export { Button }
 
-// ✅ CORRECT: Page components với default export
+// ✅ Page components with default export
 export default function Page() {
   return <div>...</div>
 }
 
-// ❌ AVOID: Arrow function exports (trừ khi cần)
+// ❌ AVOID: Arrow function exports (unless necessary)
 // export const Button = ({ ... }) => { ... }
 ```
 
 ### TypeScript Patterns
 
 ```typescript
-// Component props: Sử dụng React.ComponentProps
+// Component props: Use React.ComponentProps
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return <input type={type} className={cn(...)} {...props} />
 }
 
-// Union types với as const
+// Union types with as const
 const variants = ["default", "outline", "destructive"] as const
 type Variant = typeof variants[number]
 
-// Generic props
+// Generic props with Readonly
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
   return <div>{children}</div>
 }
 ```
 
-**Quy tắc TypeScript:**
-- Sử dụng `React.ComponentProps<"tag">` cho native element props
-- Dùng `Readonly<>` cho props object để tránh accidental mutation
-- KHÔNG dùng `as any`, `@ts-ignore`, `@ts-expect-error` - fix types properly
-- Strict mode enabled trong tsconfig.json - tôn trọng type safety
+**TypeScript rules:**
+- Use `React.ComponentProps<"tag">` for native element props
+- Use `Readonly<>` for props objects to prevent accidental mutation
+- DO NOT use `as any`, `@ts-ignore`, `@ts-expect-error` — fix types properly
+- Strict mode is enabled — respect type safety at all times
 
 ### Utility Functions & cn()
 
@@ -105,17 +237,12 @@ function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-// Utility function trong lib/utils.ts
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Sử dụng trong components
-function MyComponent({ className }: { className?: string }) {
-  return (
-    <div className={cn("base-classes", className, isActive && "active-classes")} />
-  )
-}
+// Usage
+<div className={cn("base-classes", className, isActive && "active-classes")} />
 ```
 
 ### Component Variants (CVA)
@@ -124,7 +251,6 @@ function MyComponent({ className }: { className?: string }) {
 import { cva, type VariantProps } from "class-variance-authority"
 
 const buttonVariants = cva(
-  // Base classes
   "rounded-md border transition-all",
   {
     variants: {
@@ -144,7 +270,11 @@ const buttonVariants = cva(
   }
 )
 
-function Button({ className, variant, size }: React.ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {
+function Button({
+  className,
+  variant,
+  size,
+}: React.ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {
   return <button className={cn(buttonVariants({ variant, size }), className)} />
 }
 ```
@@ -152,9 +282,7 @@ function Button({ className, variant, size }: React.ComponentProps<"button"> & V
 ### "use client" Directive
 
 ```typescript
-// Client components (state, effects, event handlers)
 "use client"
-
 import * as React from "react"
 
 export function Counter() {
@@ -163,19 +291,18 @@ export function Counter() {
 }
 ```
 
-**Khi nào dùng "use client":**
-- Components sử dụng `useState`, `useEffect`, `useRef`, v.v.
-- Components có event handlers (`onClick`, `onChange`, v.v.)
-- Components cần browser APIs
+**When to use:**
+- Components using `useState`, `useEffect`, `useRef`, etc.
+- Components with event handlers (`onClick`, `onChange`, etc.)
+- Components that need browser APIs
 
-**KHÔNG dùng khi:**
+**DO NOT use when:**
 - Pure presentational components
-- Server components (default trong Next.js app directory)
+- Server components (default in Next.js App Router)
 
 ### Data Attributes
 
 ```typescript
-// Sử dụng data attributes cho component identification
 function Button({ variant, size, ...props }) {
   return (
     <button
@@ -188,22 +315,19 @@ function Button({ variant, size, ...props }) {
 }
 ```
 
-**Quy tắc data attributes:**
 - `data-slot`: Component type (e.g., "button", "input", "card")
 - `data-variant`: Variant value
 - `data-size`: Size value
 
-### Styling Patterns
+### Styling
 
 ```typescript
-// ✅ CORRECT: Dùng cn() với destructuring
+// Always accept and merge className via cn()
 function Component({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div className={cn("base-classes", className)} {...props} />
-  )
+  return <div className={cn("base-classes", className)} {...props} />
 }
 
-// ✅ CORRECT: Conditional classes
+// Conditional classes
 <div className={cn(
   "base-classes",
   isActive && "active-classes",
@@ -211,28 +335,28 @@ function Component({ className, ...props }: React.ComponentProps<"div">) {
 )} />
 ```
 
-**Tailwind CSS v4:**
-- Tailwind v4 đã tích hợp CSS-first approach
-- Sử dụng Tailwind classes trực tiếp, không cần custom utilities
-- Design tokens: `primary`, `secondary`, `muted`, `accent`, `destructive`, `foreground`, `background`, `border`, `input`, `ring`
+**Tailwind CSS v4 specifics:**
+- CSS-first configuration via `globals.css` (`@theme inline`, `@custom-variant`)
+- Design tokens use oklch color space (light/dark)
+- Token names: `primary`, `secondary`, `muted`, `accent`, `destructive`, `foreground`, `background`, `border`, `input`, `ring`, `card`, `popover`, `sidebar`, `chart-1..5`
+- Custom utilities: `.text-link`, `.glass` (glassmorphism), `.animate-marquee`, `.mask-linear`, `.scrollbar-hide`
+- shadcn integration via `@import "shadcn/tailwind.css"`
+- Animation library: `tw-animate-css`
 
 ### Icons
 
 ```typescript
-// Từ lucide-react
 import { Plus, Bluetooth } from "lucide-react"
 
-// Sử dụng trực tiếp
 <Plus strokeWidth={2} data-icon="inline-start" />
 ```
 
 ### Base UI Integration
 
 ```typescript
-// Component composition với Base UI
 import { Dialog, Select, Menu, AlertDialog, Field, Separator } from "@base-ui/react"
 
-// Dialog example
+// Dialog pattern
 <Dialog.Root open={open} onOpenChange={setOpen}>
   <Dialog.Trigger>Open</Dialog.Trigger>
   <Dialog.Portal>
@@ -245,7 +369,7 @@ import { Dialog, Select, Menu, AlertDialog, Field, Separator } from "@base-ui/re
   </Dialog.Portal>
 </Dialog.Root>
 
-// Select example
+// Select pattern
 <Select.Root value={value} onValueChange={setValue}>
   <Select.Trigger>
     <Select.Value placeholder="Select..." />
@@ -263,12 +387,12 @@ import { Dialog, Select, Menu, AlertDialog, Field, Separator } from "@base-ui/re
 ### Error Handling
 
 ```typescript
-// KHÔNG có empty catch blocks
+// No empty catch blocks
 try {
   await fetchData()
 } catch (error) {
   console.error("Failed to fetch data:", error)
-  throw error // hoặc handle gracefully
+  throw error // or handle gracefully
 }
 
 // Type-safe error handling
@@ -279,36 +403,82 @@ if (error instanceof Error) {
 
 ---
 
-## File Structure
+## Database
 
+### Schema (lib/db/schema.ts)
+
+Main tables:
+- **skills** — Core skill records (name, slug, owner, repo, path, stars, forks, status, security scan results, search text with GIN trigram index)
+- **categories** — Skill categories (name, slug, color, order)
+- **skillCategories** — Many-to-many join table (skill ↔ category)
+- **syncJobs** — GitHub sync job tracking
+- **syncState** — Key-value sync state
+- **skillReports** — User-submitted skill reports
+
+### Type Exports
+
+```typescript
+import type { Skill, NewSkill, Category, SyncJob } from "@/lib/db/schema"
 ```
-app/              # Next.js App Router pages
-components/       # React components
-  ui/            # Reusable UI components (shadcn-style)
-lib/             # Utility functions
-proxy.ts          # Next.js Proxy entry (replaces middleware)
-next.config.ts   # Next.js config
-tsconfig.json    # TypeScript config
-eslint.config.mjs # ESLint config
-```
+
+### Drizzle Patterns
+
+- Schema: `lib/db/schema.ts`
+- Client: `lib/db/client.ts`
+- Queries: `lib/db/queries.ts`
+- Migrations: `drizzle/` directory
+- Config: `drizzle.config.ts` (reads `.env.local` via dotenv)
+
+---
+
+## Authentication
+
+- **Clerk** handles all auth (`@clerk/nextjs`)
+- Proxy (`proxy.ts`) uses `clerkMiddleware` with route matchers:
+  - `/dashboard(.*)` — Protected (requires sign-in)
+  - `/admin(.*)`, `/api/admin(.*)` — Admin-only (checks `metadata.role === "admin"`)
+- Auth helpers: `lib/auth.ts`
+- Clerk type extensions: `types/clerk.d.ts`
+
+---
+
+## Environment Variables
+
+Validated via `@t3-oss/env-nextjs` in `lib/env.ts`. Validation is skipped in development.
+
+**Server:**
+- `DATABASE_URL` — PostgreSQL connection string (required)
+- `GITHUB_TOKEN` / `GITHUB_WEBHOOK_SECRET` — GitHub integration
+- `CLERK_SECRET_KEY` — Clerk auth
+- `SYNC_SECRET_TOKEN` / `INDEXNOW_KEY` — Sync & indexing
+- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` — Redis
+- `INNGEST_EVENT_KEY` / `INNGEST_SIGNING_KEY` — Background jobs
+- `GOOGLE_GENERATIVE_AI_API_KEY` / `GEMINI_MODEL` — AI features
+
+**Client:**
+- `NEXT_PUBLIC_SITE_URL` / `NEXT_PUBLIC_APP_URL` — Site URLs
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` — Clerk client key
+
+---
+
+## Next.js Configuration
+
+Key settings in `next.config.ts`:
+- **Turbopack** enabled with `root: __dirname`
+- **Experimental:** `optimizeCss: true`, `optimizePackageImports: ["@clerk/nextjs"]`
+- **Images:** AVIF + WebP formats, SVG allowed, dynamic remote patterns from `config/image-hosts.ts`
+- **Security headers:** `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, HSTS (production only)
+- **Static caching:** `/_next/static/*` gets `max-age=31536000, immutable`
+- **Compression:** gzip/brotli enabled
+- **`proxy.ts`:** Replaces `middleware.ts` in Next.js 16. Single file at root; all request-level logic goes here (can split into modules and import)
 
 ---
 
 ## Linting & Quality
 
-- ESLint sử dụng `eslint-config-next` với TypeScript rules
+- ESLint: `eslint-config-next/core-web-vitals` + `eslint-config-next/typescript`
+- ESLint config uses flat config format (`eslint.config.mjs`)
 - Strict TypeScript enabled
-- Luôn chạy `bun lint` sau khi thay đổi code
-- Fix all lint errors trước khi commit
-
----
-
-## Additional Notes
-
-- Next.js 16 dung `proxy.ts` (Proxy) thay cho `middleware.ts` trong project nay
-- Chi co mot `proxy.ts` o root, moi logic request-level dat tai day (co the tach module roi import)
-- Project sử dụng Next.js 16 với App Router
-- Tailwind CSS v4 với CSS-first configuration
-- No testing framework configured - ask user before adding tests
-- Icons: lucide-react
-- UI pattern: shadcn-style components với Base UI primitives (@base-ui/react)
+- Always run `bun lint` after code changes
+- Fix all lint errors before committing
+- No test framework configured — ask user before adding tests

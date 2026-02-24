@@ -30,6 +30,7 @@
     "ai": "^6.0.97",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "critters": "^0.0.25",
     "dotenv": "^17.2.4",
     "drizzle-orm": "^0.45.1",
     "inngest": "^3.52.3",
