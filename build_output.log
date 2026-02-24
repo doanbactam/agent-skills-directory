@@ -1,8 +1,0 @@
-bun build v1.2.14 (6a363a38)
-error: Missing entrypoints. What would you like to bundle?
-
-Usage:
-  $ bun build <entrypoint> [...<entrypoints>] [...flags]
-
-To see full documentation:
-  $ bun build --help

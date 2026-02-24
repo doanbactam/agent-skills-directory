@@ -416,10 +416,6 @@ export async function getSkillById(id: string) {
   return result ?? null
 }
 
-export async function getSkillByPath(owner: string, repo: string, path: string) {
-  if (process.env.SKIP_ENV_VALIDATION) return null
-  return getSkillById(`${owner}/${repo}/${path}`)
-}
 
 export async function getSkillBySlug(owner: string, slug: string) {
   if (process.env.SKIP_ENV_VALIDATION) return null
@@ -730,12 +726,6 @@ export async function batchUpsertSkills(skillsList: NewSkill[]) {
   return { inserted: totalInserted }
 }
 
-export async function clearAllSkills() {
-  await dbPool.transaction(async (tx) => {
-    await tx.delete(skillCategories)
-    await tx.delete(skills)
-  })
-}
 
 export async function getCategories() {
   if (process.env.SKIP_ENV_VALIDATION) return []
