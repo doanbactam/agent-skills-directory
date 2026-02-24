@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -143,16 +143,11 @@ function SubmitSkillForm({ className }: { className?: string }) {
       <Button
         type="submit"
         disabled={state === "submitting" || !repoUrl.trim()}
+        isLoading={state === "submitting"}
+        loadingText="Importing…"
         className="w-full"
       >
-        {state === "submitting" ? (
-          <>
-            <Loader2 className="mr-2 size-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
-            Importing…
-          </>
-        ) : (
-          "Submit"
-        )}
+        Submit
       </Button>
     </form>
   );

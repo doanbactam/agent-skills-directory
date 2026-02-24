@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -33,23 +34,32 @@ const buttonVariants = cva(
   }
 )
 
+interface ButtonProps
+  extends React.ComponentProps<"button">,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+  isLoading?: boolean
+  loadingText?: string
+}
+
 function Button({
   className,
   variant = "default",
   size = "default",
-  asChild,
+  asChild = false,
   children,
+  isLoading = false,
+  loadingText,
+  disabled,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+}: ButtonProps) {
   const buttonClasses = cn(buttonVariants({ variant, size }), className)
 
   if (asChild && React.isValidElement(children)) {
     const child = children as React.ReactElement<{ className?: string }>
     return React.cloneElement(child, {
       className: cn(buttonClasses, child.props?.className),
+      disabled,
       "data-slot": "button",
       "data-variant": variant,
       "data-size": size,
@@ -58,13 +68,24 @@ function Button({
 
   return (
     <button
+      className={buttonClasses}
+      disabled={isLoading || disabled}
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={buttonClasses}
       {...props}
     >
-      {children}
+      {isLoading && (
+        <Loader2
+          className="animate-spin motion-reduce:animate-none"
+          aria-hidden="true"
+        />
+      )}
+      {isLoading && loadingText ? (
+        loadingText
+      ) : isLoading && size?.toString().startsWith("icon") ? null : (
+        children
+      )}
     </button>
   )
 }

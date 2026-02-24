@@ -263,15 +263,14 @@ export function SkillEditDialog({
           <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button type="button" onClick={handleSave} disabled={isSaving || !skill}>
-            {isSaving ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
-                Saving…
-              </>
-            ) : (
-              "Save Changes"
-            )}
+          <Button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving || !skill}
+            isLoading={isSaving}
+            loadingText="Saving…"
+          >
+            Save Changes
           </Button>
         </DialogFooter>
       </DialogContent>
