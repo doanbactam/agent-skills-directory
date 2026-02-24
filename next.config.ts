@@ -27,11 +27,11 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
-  serverExternalPackages: ["@clerk/nextjs", "@clerk/clerk-react"],
+
   experimental: {
     optimizeCss: true,
+    optimizePackageImports: ["@clerk/nextjs"],
   },
-  optimizePackageImports: ["@clerk/nextjs"],
   images: {
     remotePatterns: (() => {
       const securePatterns: RemotePattern[] = IMAGE_HOSTNAMES.map((hostname) => ({
