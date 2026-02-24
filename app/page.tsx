@@ -10,7 +10,6 @@ import { getStats } from "@/lib/stats"
 import { getCategories, getSkills, type GetSkillsOptions } from "@/lib/db/queries"
 import { getHealthStatus } from "@/lib/health"
 import { siteConfig } from "@/config/site"
-import { HomeClient } from "@/features/marketing/home-client"
 
 export const metadata: Metadata = {
   title: {
@@ -148,7 +147,6 @@ export default async function Page({ searchParams }: PageProps) {
     <>
       <FaqJsonLd />
       <Container>
-        <HomeClient />
         <Hero stats={stats} healthStatus={healthStatus} />
         <section aria-labelledby="featured-skills-heading" className="space-y-4">
           <h2 id="featured-skills-heading" className="sr-only">

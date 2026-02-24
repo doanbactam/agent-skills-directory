@@ -13,11 +13,11 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
   ...(isProd
     ? [
-        {
-          key: "Strict-Transport-Security",
-          value: "max-age=63072000; includeSubDomains; preload",
-        },
-      ]
+      {
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload",
+      },
+    ]
     : []),
 ]
 
@@ -27,9 +27,11 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  serverExternalPackages: ["@clerk/nextjs", "@clerk/clerk-react"],
   experimental: {
     optimizeCss: true,
   },
+  optimizePackageImports: ["@clerk/nextjs"],
   images: {
     remotePatterns: (() => {
       const securePatterns: RemotePattern[] = IMAGE_HOSTNAMES.map((hostname) => ({
