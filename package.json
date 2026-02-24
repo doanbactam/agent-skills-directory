@@ -15,8 +15,7 @@
     "db:migrate": "bun drizzle-kit migrate",
     "db:push": "bun drizzle-kit push",
     "db:studio": "bun drizzle-kit studio",
-    "db:seed:categories": "bun run lib/db/seed-categories.ts",
-    "db:fix": "bun run scripts/fix-db.ts"
+    "db:seed:categories": "bun run lib/db/seed-categories.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.30",
@@ -31,7 +30,6 @@
     "ai": "^6.0.97",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "critters": "^0.0.25",
     "dotenv": "^17.2.4",
     "drizzle-orm": "^0.45.1",
     "inngest": "^3.52.3",
@@ -56,7 +54,6 @@
     "@types/node": "^20.19.33",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
-    "depcheck": "^1.4.7",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.3",
     "eslint-config-next": "16.1.6",
