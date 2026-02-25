@@ -56,6 +56,9 @@ export function scanSkillContent(content: string): SecurityScanResult {
   // 4. Check for external resource fetching
   threats.push(...detectExternalResources(content))
 
+  // 5. Check for hardcoded secrets
+  threats.push(...detectSecrets(content))
+
   // Calculate risk score
   const riskScore = calculateRiskScore(threats)
 
@@ -274,6 +277,35 @@ function detectBase64Content(content: string): SecurityThreat[] {
 }
 
 /**
+ * Detect hardcoded secrets and API keys
+ */
+function detectSecrets(content: string): SecurityThreat[] {
+  const threats: SecurityThreat[] = []
+
+  const secretPatterns = [
+    { name: "OpenAI API Key", pattern: /sk-[a-zA-Z0-9]{40,60}/, severity: "critical" as const },
+    { name: "GitHub Token", pattern: /(ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]{36}/, severity: "critical" as const },
+    { name: "AWS Access Key", pattern: /(AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16}/, severity: "critical" as const },
+    { name: "Generic Private Key", pattern: /-----BEGIN PRIVATE KEY-----/, severity: "critical" as const },
+    { name: "Slack Token", pattern: /xox[baprs]-[a-zA-Z0-9-]+/, severity: "critical" as const },
+    { name: "Stripe Secret Key", pattern: /sk_live_[0-9a-zA-Z]{24}/, severity: "critical" as const },
+  ]
+
+  for (const { name, pattern, severity } of secretPatterns) {
+    if (pattern.test(content)) {
+      threats.push({
+        type: "suspicious_pattern",
+        severity,
+        message: `Potential secret detected: ${name}`,
+        details: "Hardcoded secrets should not be committed to repositories",
+      })
+    }
+  }
+
+  return threats
+}
+
+/**
  * Detect external resource fetching
  */
 function detectExternalResources(content: string): SecurityThreat[] {
@@ -336,8 +368,8 @@ function calculateRiskScore(threats: SecurityThreat[]): number {
   if (threats.length === 0) return 0
 
   const severityWeights = {
-    critical: 40,
-    high: 25,
+    critical: 60,
+    high: 30,
     medium: 10,
     low: 5,
   }

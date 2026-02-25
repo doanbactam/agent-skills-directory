@@ -24,7 +24,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   compress: true, // Enable gzip/brotli compression to reduce egress
   poweredByHeader: false,
-  serverExternalPackages: ["@clerk/nextjs"],
+  // serverExternalPackages: ["@clerk/nextjs"], // Removed to allow bundling
   turbopack: {
     root: __dirname,
   },
