@@ -5,6 +5,12 @@ import { Check, ExternalLink, SquarePen, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { SecurityBadge } from "@/features/skills/security-badge"
 import { DataTable, type ColumnDef } from "@/components/ui/data-table"
 import { getExternalUrl } from "@/lib/utils"
 
@@ -155,15 +161,8 @@ export const SkillsTable = React.memo(function SkillsTable({
           }
           try {
             const parsed = JSON.parse(scan)
-            const isSafe = parsed.safe === true
-            const colorClass = isSafe
-              ? "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950"
-              : "text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950"
-            return (
-              <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${colorClass}`}>
-                {isSafe ? "✓ Safe" : "⚠ Risk"}
-              </span>
-            )
+            if (!parsed || typeof parsed !== "object") throw new Error("Invalid scan")
+            return <SecurityBadge securityScan={scan} variant="compact" />
           } catch {
             return (
               <span className="px-2 py-0.5 text-xs rounded-full font-medium text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950">
@@ -181,34 +180,51 @@ export const SkillsTable = React.memo(function SkillsTable({
           const isProcessing = processingIds.has(skill.id)
           return (
             <div className="flex items-center gap-1">
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Edit skill"
-                onClick={() => onEdit(skill)}
-                disabled={isProcessing}
-              >
-                <SquarePen className="size-3.5" aria-hidden="true" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Edit skill"
+                    onClick={() => onEdit(skill)}
+                    disabled={isProcessing}
+                  >
+                    <SquarePen className="size-3.5" aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Edit skill</TooltipContent>
+              </Tooltip>
+
               {skill.status !== "approved" && (
-                <Button
-                  size="icon"
-                  aria-label="Approve skill"
-                  onClick={() => handleAction(skill.id, "approve", onApprove)}
-                  disabled={isProcessing}
-                >
-                  <Check className="size-3.5" aria-hidden="true" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      aria-label="Approve skill"
+                      onClick={() => handleAction(skill.id, "approve", onApprove)}
+                      disabled={isProcessing}
+                    >
+                      <Check className="size-3.5" aria-hidden="true" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Approve skill</TooltipContent>
+                </Tooltip>
               )}
-              <Button
-                size="icon"
-                variant="outline"
-                aria-label="Delete skill"
-                onClick={() => handleAction(skill.id, "delete", onDelete)}
-                disabled={isProcessing}
-              >
-                <Trash2 className="size-3.5" aria-hidden="true" />
-              </Button>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    aria-label="Delete skill"
+                    onClick={() => handleAction(skill.id, "delete", onDelete)}
+                    disabled={isProcessing}
+                  >
+                    <Trash2 className="size-3.5" aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete skill</TooltipContent>
+              </Tooltip>
             </div>
           )
         },
