@@ -84,18 +84,30 @@ describe("checkRateLimitInMemory", () => {
 })
 
 describe("getClientIdentifier", () => {
-  it("should prioritize X-Real-IP if available", async () => {
+  it("should prioritize X-Forwarded-For over X-Real-IP", async () => {
     const { getClientIdentifier } = await import("./rate-limit")
     const req = new Request("http://localhost", {
       headers: {
-        "x-real-ip": "real-ip",
-        "x-forwarded-for": "spoofed-ip, real-ip"
+        "x-real-ip": "spoofed-ip",
+        "x-forwarded-for": "client-ip, real-proxy-ip"
+      }
+    })
+    // Should take the last IP from X-Forwarded-For (trusted proxy behavior)
+    // ignoring the spoofed X-Real-IP
+    expect(getClientIdentifier(req)).toBe("real-proxy-ip")
+  })
+
+  it("should fallback to X-Real-IP if X-Forwarded-For is missing", async () => {
+    const { getClientIdentifier } = await import("./rate-limit")
+    const req = new Request("http://localhost", {
+      headers: {
+        "x-real-ip": "real-ip"
       }
     })
     expect(getClientIdentifier(req)).toBe("real-ip")
   })
 
-  it("should use the last IP from X-Forwarded-For if X-Real-IP is missing", async () => {
+  it("should use the last IP from X-Forwarded-For", async () => {
     const { getClientIdentifier } = await import("./rate-limit")
     const req = new Request("http://localhost", {
       headers: {

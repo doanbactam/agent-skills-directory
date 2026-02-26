@@ -29,21 +29,28 @@ export const reportRateLimit = new Ratelimit({
 })
 
 // Helper function to get client identifier
-export function getClientIdentifier(request: Request): string {
-  // Prioritize X-Real-IP if available (often set by immediate trusted proxy)
-  const realIp = request.headers.get("x-real-ip")
-  if (realIp) return realIp.trim()
+export interface HeaderLike {
+  get(name: string): string | null
+}
 
-  const forwarded = request.headers.get("x-forwarded-for")
+export function getClientIp(headers: HeaderLike): string {
+  // Prioritize X-Forwarded-For: standard for proxies (e.g. Vercel)
+  // The last IP in the list is the one that connected to the proxy.
+  const forwarded = headers.get("x-forwarded-for")
   if (forwarded) {
-    // If multiple IPs, use the LAST one. The last IP is the one added by the
-    // immediate trusted proxy (e.g. Vercel) and represents the client connecting to it.
-    // The first IP is user-controlled and can be spoofed.
     const parts = forwarded.split(",")
     return parts[parts.length - 1].trim()
   }
 
+  // Fallback to X-Real-IP if available (e.g. custom proxy setup, or direct connection)
+  const realIp = headers.get("x-real-ip")
+  if (realIp) return realIp.trim()
+
   return "anonymous"
+}
+
+export function getClientIdentifier(request: Request): string {
+  return getClientIp(request.headers)
 }
 
 // Legacy in-memory rate limiter (fallback when Redis unavailable)

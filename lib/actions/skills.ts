@@ -17,7 +17,7 @@ import { parseSkillMd, normalizeAllowedTools } from "@/lib/features/skills/parse
 import { toSkillIdentity, isLikelyAgentSkill } from "@/lib/features/skills/canonical"
 import { mapSkillToCategories, parseTopics } from "@/lib/categories"
 import { slugify } from "@/lib/utils"
-import { checkRateLimitInMemory, reportRateLimit } from "@/lib/rate-limit"
+import { checkRateLimitInMemory, reportRateLimit, getClientIp } from "@/lib/rate-limit"
 import { inngest } from "@/lib/inngest/client"
 import { skillSubmissionSchema, skillUpdateSchema, type SkillSubmission, type SkillUpdate } from "@/lib/validators/skills"
 import { checkAdminAuth } from "@/lib/auth"
@@ -28,11 +28,9 @@ const RATE_WINDOW_MS = 60_000
 
 async function getRateLimitKey() {
   const headersList = await headers()
-  const forwarded = headersList.get("x-forwarded-for")
-  const realIp = headersList.get("x-real-ip")
-  const clientIP = forwarded?.split(",")[0]?.trim() || realIp?.trim() || "unknown"
+  const clientIP = getClientIp(headersList)
 
-  if (clientIP !== "unknown") {
+  if (clientIP !== "anonymous") {
     return `submission:${clientIP}`
   }
 
