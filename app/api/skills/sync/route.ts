@@ -4,8 +4,18 @@ import { batchUpsertSkills } from "@/lib/db/queries"
 import type { NewSkill } from "@/lib/db/schema"
 import { env } from "@/lib/env"
 import { slugify } from "@/lib/utils"
+import { strictRateLimit, getClientIdentifier } from "@/lib/rate-limit"
+import { timingSafeEqual, createHash } from "crypto"
 
 export async function POST(request: Request) {
+  // Rate limiting
+  const identifier = getClientIdentifier(request)
+  const { success } = await strictRateLimit.limit(identifier)
+
+  if (!success) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+  }
+
   const authHeader = request.headers.get("authorization")
   const expectedToken = env.SYNC_SECRET_TOKEN
 
@@ -17,7 +27,16 @@ export async function POST(request: Request) {
     )
   }
 
-  if (authHeader !== `Bearer ${expectedToken}`) {
+  // Constant-time comparison to prevent timing attacks
+  const expectedAuth = `Bearer ${expectedToken}`
+  const providedAuth = authHeader || ""
+
+  // We hash both values to ensure they are the same length before comparison
+  // timingSafeEqual throws if lengths are different
+  const expectedHash = createHash("sha256").update(expectedAuth).digest()
+  const providedHash = createHash("sha256").update(providedAuth).digest()
+
+  if (!timingSafeEqual(expectedHash, providedHash)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
