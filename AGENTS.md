@@ -18,11 +18,19 @@ All skills are stored in the `.agents/skills/` directory. Each skill has its own
 
 ```
 .agents/skills/
+├── ci-fix/
+├── create-pull-request/
 ├── docs-update/
-│   └── SKILL.md
-├── another-skill/
-│   └── SKILL.md
-└── ...
+├── github-bug-report-triage/
+├── github-issue-dedupe/
+├── mcp-builder/
+├── scheduler/
+├── seo-aeo-audit/
+├── slack-qa-investigate/
+├── terraform-style-check/
+├── web-accessibility-audit/
+├── web-performance-audit/
+└── webapp-testing/
 ```
 
 ## Skill File Format
