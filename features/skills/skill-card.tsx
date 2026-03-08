@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ShieldCheck, Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { ExternalImage } from "@/components/ui/external-image";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { SecurityBadge } from "./security-badge";
 import type { SkillListItem } from "@/types";
 
@@ -15,61 +15,52 @@ type SkillCardProps = {
 function SkillCard({ skill, className }: SkillCardProps) {
   const skillUrl = `/${skill.owner}/skills/${skill.slug}`;
   const updatedAt = skill.updatedAtLabel ?? null;
-  const optimizedAvatar = buildAvatarUrl(skill.avatarUrl);
 
   return (
-    <Link
-      href={skillUrl}
-      prefetch={false}
+    <div
       data-slot="skill-card"
       className={cn(
         "group relative flex h-full flex-col rounded-2xl border border-border/50 bg-card/40 p-4",
         "backdrop-blur-md shadow-sm",
         "transition-all duration-300 ease-out will-change-transform",
         "hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 hover:bg-card/60",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+        "has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring/50",
         className,
       )}
     >
       {/* Header */}
       <div className="flex items-start gap-3.5">
         <div className="shrink-0">
-          {skill.avatarUrl ? (
-            <div className="overflow-hidden rounded-xl bg-muted shadow-sm border border-border/50 transition-transform group-hover:scale-105 duration-300">
-              <ExternalImage
-                src={optimizedAvatar ?? skill.avatarUrl}
-                alt={`${skill.name} by ${skill.owner}`}
-                width={44}
-                height={44}
-                quality={85}
-                className="object-cover size-11"
-              />
-            </div>
-          ) : (
-            <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-muted to-muted/50 border border-border/50 shadow-sm transition-transform group-hover:scale-105 duration-300">
-              <span className="text-sm font-bold text-muted-foreground group-hover:text-primary transition-colors">
-                {skill.owner.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          )}
+          <UserAvatar
+            src={skill.avatarUrl}
+            alt={`${skill.name} by ${skill.owner}`}
+            size={44}
+            className="rounded-xl border border-border/50 shadow-sm transition-transform group-hover:scale-105 duration-300"
+            quality={85}
+          />
         </div>
 
         <div className="min-w-0 flex-1 space-y-1">
           <h3 className="truncate text-base font-semibold leading-tight text-foreground group-hover:text-primary transition-colors">
-            {skill.name}
+            <Link href={skillUrl} prefetch={false} className="focus:outline-none">
+              <span className="absolute inset-0" aria-hidden="true" />
+              {skill.name}
+            </Link>
           </h3>
-          <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <span className="truncate hover:text-foreground transition-colors">{skill.owner}</span>
             {skill.isVerifiedOrg && (
-              <span className="inline-flex items-center" title="Verified Organization">
+              <span className="inline-flex items-center relative z-10" title="Verified Organization">
                 <ShieldCheck className="size-3.5 shrink-0 text-primary fill-primary/10" aria-hidden="true" />
                 <span className="sr-only">Verified organization</span>
               </span>
             )}
             {skill.securityScan && (
-              <SecurityBadge securityScan={skill.securityScan} variant="icon" />
+              <span className="relative z-10 inline-flex">
+                <SecurityBadge securityScan={skill.securityScan} variant="icon" />
+              </span>
             )}
-          </p>
+          </div>
         </div>
       </div>
 
@@ -98,21 +89,8 @@ function SkillCard({ skill, className }: SkillCardProps) {
           </span>
         )}
       </div>
-    </Link>
+    </div>
   );
-}
-
-function buildAvatarUrl(avatarUrl: string | null): string | null {
-  if (!avatarUrl) return null;
-
-  try {
-    const url = new URL(avatarUrl);
-    url.searchParams.set("s", "80");
-    return url.toString();
-  } catch {
-    const separator = avatarUrl.includes("?") ? "&" : "?";
-    return `${avatarUrl}${separator}s=80`;
-  }
 }
 
 function formatStars(stars: number): string {
